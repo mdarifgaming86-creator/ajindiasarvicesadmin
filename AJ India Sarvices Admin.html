@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AJ INDIA SARVICES - Admin Portal</title>
+    <link rel="icon" type="image/png" href="https://via.placeholder.com/32?text=AJ" class="dynamic-admin-logo">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        #navbar-iframe, #b-navbar { display: none !important; } body { margin-top: 0 !important; } 
+        :root { --primary: #1e40af; --sidebar-bg: #0f172a; --sidebar-hover: #1e293b; --text-light: #f8fafc; --bg-light: #f1f5f9; --white: #ffffff; --text-dark: #0f172a; --border: #e2e8f0; --accent: #3b82f6; --success: #10b981; --danger: #ef4444;}
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-light); color: var(--text-dark); display: flex; height: 100vh; overflow: hidden; margin: 0; width: 100%; }
+        
+        #global-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-light); z-index: 999999; display: flex; justify-content: center; align-items: center; flex-direction: column; transition: opacity 0.4s ease-out; }
+        .loader-spinner { width: 50px; height: 50px; border: 5px solid #e2e8f0; border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        #login-screen { position: fixed; width: 100%; height: 100%; background: linear-gradient(135deg, #0f172a, #1e3a8a); display: flex; justify-content: center; align-items: center; z-index: 10000; padding: 20px;}
+        .login-box { background: var(--white); padding: 40px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); width: 100%; max-width: 400px; text-align: center; }
+        .login-box img { max-height: 120px; object-fit: contain; margin-bottom: 25px; transition: 0.3s;}
+        .login-box input { width: 100%; padding: 15px; margin-bottom: 15px; border: 2px solid var(--border); border-radius: 10px; outline: none; font-size:1rem; font-weight: 500;}
+        .btn-primary { background: #2563eb; color: var(--white); padding: 12px 20px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap:8px; justify-content:center; transition:0.2s;}
+        .btn-primary:active { transform: scale(0.96); }
+        
+        #admin-layout { display: none; width: 100%; min-height: 100vh; }
+        
+        .sidebar { position: fixed; width: 260px; height: 100vh; background: var(--sidebar-bg); color: var(--text-light); display: flex; flex-direction: column; z-index: 3000; transition: 0.3s; overflow-y: auto; overflow-x: hidden;}
+        .sidebar::-webkit-scrollbar { width: 6px; }
+        .sidebar::-webkit-scrollbar-track { background: var(--sidebar-bg); }
+        .sidebar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        .sidebar::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        .nav-item { padding: 15px 25px; cursor: pointer; color: #94a3b8; font-weight: 600; display:flex; align-items:center; gap:15px;}
+        .nav-item.active, .nav-item:hover { background: var(--sidebar-hover); color: var(--white); border-left: 4px solid var(--accent); }
+        .main-content { margin-left: 260px; height: 100vh; overflow-y: auto; width: calc(100% - 260px); padding:20px;}
+        
+        .dashboard-box { background: var(--white); padding: 20px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 20px;}
+        .table-container { background: var(--white); border-radius: 16px; border: 1px solid var(--border); overflow-x: auto; margin-bottom: 20px; padding:20px;}
+        table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.9rem;}
+        th { color: var(--text-gray); }
+        
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 5000; padding: 20px;}
+        .modal-content { background: var(--white); padding: 25px; border-radius: 16px; width: 100%; max-width: 600px; max-height:90vh; overflow-y:auto; position: relative;}
+        .close-btn { position: absolute; top: 15px; right: 15px; font-size: 1.2rem; cursor: pointer;}
+        input, select, textarea { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid var(--border); border-radius: 8px; outline: none; }
+        
+        .action-btn { background: none; border: none; cursor: pointer; font-size: 1.1rem; margin-right: 10px; color: var(--text-gray); }
+        .order-chk { width: 18px; height: 18px; cursor: pointer; margin: 0; }
+        .copy-utr { cursor: pointer; position: relative; }
+        .copy-utr:hover::after { content: 'Click to copy'; position: absolute; top: -20px; left: 0; background: #333; color: #fff; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; white-space: nowrap; }
+    </style>
+</head>
+<body>
+
+    <div id="global-loader" style="display:none;">
+        <div class="loader-spinner"></div>
+        <h3 style="color: var(--primary); font-weight: 900; letter-spacing: 1px;">AJ INDIA SARVICES ADMIN</h3>
+    </div>
+
+    <div id="login-screen" style="display:none;">
+        <div class="login-box">
+            <img src="https://via.placeholder.com/150x80?text=AJ+LOGO" class="dynamic-admin-logo" style="width: auto; height: 80px; margin-bottom: 15px;" onerror="this.src='https://via.placeholder.com/150x80?text=AJ+LOGO'">
+            <h2 style="margin-bottom: 20px; font-weight:900;">ADMIN PORTAL</h2>
+            <input type="email" id="admin-email" placeholder="Admin/Staff Email" style="font-weight:bold;">
+            <input type="password" id="admin-password" placeholder="•••••••••">
+            <button class="btn-primary" onclick="loginAdmin()" style="width:100%; font-size:1.1rem; background:#2563eb;" id="login-btn">Login Securely</button>
+            <div id="login-error" style="color:#ef4444; background:#fee2e2; border:1px solid #fca5a5; padding:10px; border-radius:8px; display:none; margin-top:15px; font-size:0.85rem; text-align:left;"></div>
+        </div>
+    </div>
+
+    <div id="admin-layout">
+        <aside class="sidebar">
+            <div style="padding:20px; text-align:center; border-bottom:1px solid #334155; position: sticky; top: 0; background: var(--sidebar-bg); z-index: 10;">
+                <img src="https://via.placeholder.com/150x80?text=AJ+LOGO" class="dynamic-admin-logo" style="width:auto; height: 60px; background:#fff; border-radius:8px; padding:5px; transition: 0.3s;" onerror="this.src='https://via.placeholder.com/150x80?text=AJ+LOGO'">
+            </div>
+            
+            <div class="nav-item active" onclick="switchPage('orders', this)"><i class="fa-solid fa-file-contract"></i> Applications</div>
+            <div class="nav-item" id="nav-tickets" onclick="switchPage('tickets', this)"><i class="fa-solid fa-headset"></i> Helpdesk</div>
+            <div class="nav-item" id="nav-products" onclick="switchPage('products', this)"><i class="fa-solid fa-laptop-file"></i> Manage Services</div>
+            <div class="nav-item" id="nav-aitools" onclick="switchPage('aitools', this)"><i class="fa-solid fa-microchip" style="color:var(--accent);"></i> Manage AI Tools</div>
+            <div class="nav-item" id="nav-promocodes" onclick="switchPage('promocodes', this)"><i class="fa-solid fa-ticket"></i> Promo Codes</div>
+            <div class="nav-item" id="nav-categories" onclick="switchPage('categories', this)"><i class="fa-solid fa-tags"></i> Categories</div>
+            <div class="nav-item" id="nav-banners" onclick="switchPage('banners', this)"><i class="fa-regular fa-images"></i> Slider Banners</div>
+
+            <div class="nav-item" id="nav-wallet" onclick="switchPage('wallet', this)"><i class="fa-solid fa-wallet"></i> Wallet Requests</div>
+            <div class="nav-item" id="nav-dashboard" onclick="switchPage('dashboard', this)"><i class="fa-solid fa-chart-pie"></i> Analytics</div>
+            <div class="nav-item" id="nav-customers" onclick="switchPage('customers', this)"><i class="fa-solid fa-users"></i> Users Verification</div>
+            <div class="nav-item" id="nav-settings" onclick="switchPage('settings', this)"><i class="fa-solid fa-gear"></i> Portal Settings</div>
+            
+            <div class="nav-item" style="color:var(--danger); border-top:1px solid #334155; margin-top:auto;" onclick="logoutAdmin()"><i class="fa-solid fa-power-off"></i> Logout</div>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; background:var(--white); padding:20px; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,0.02);">
+                <h2 id="page-title" style="font-size: 1.4rem; margin:0; font-weight: 900;">Applications</h2>
+                <div style="background: #eff6ff; color: var(--primary); padding: 8px 18px; border-radius: 20px; font-size: 0.9rem; font-weight: 800; border:1px solid #bfdbfe;"><i class="fa-solid fa-shield-check" style="margin-right:5px;"></i> <span id="admin-role-badge">Super Admin</span></div>
+            </header>
+
+            <section id="orders" class="page active">
+                <div class="table-container">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:15px; align-items:center; flex-wrap:wrap; gap:10px;">
+                        <h3>Live Tracking Overview</h3>
+                        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                            <div style="background:#f1f5f9; padding:5px 10px; border-radius:8px; border:1px solid #cbd5e1; display:flex; gap:10px; align-items:center;">
+                                <span style="font-size:0.8rem; font-weight:bold;">Bulk Update:</span>
+                                <select id="bulk-status" style="margin:0; padding:6px; width:auto; border-radius:6px; font-size:0.8rem;">
+                                    <option value="">Select Status</option>
+                                    <option value="Processing">Processing</option>
+                                    <option value="Delivered">Completed</option>
+                                    <option value="Cancelled">Cancelled</option>
+                                </select>
+                                <button class="btn-primary" onclick="applyBulkUpdate()" style="margin:0; padding:6px 12px; font-size:0.8rem;"><i class="fa-solid fa-check"></i> Apply</button>
+                            </div>
+                            <div style="background:#f1f5f9; padding:5px 10px; border-radius:8px; border:1px solid #cbd5e1; display:flex; gap:5px; align-items:center;">
+                                <span style="font-size:0.8rem; font-weight:bold;">Date:</span>
+                                <input type="date" id="filter-start" style="margin:0; padding:6px; width:120px; font-size:0.8rem;"> 
+                                <span style="font-size:0.8rem;">to</span>
+                                <input type="date" id="filter-end" style="margin:0; padding:6px; width:120px; font-size:0.8rem;">
+                                <button class="btn-primary" onclick="filterByDate()" style="margin:0; padding:6px 12px; font-size:0.8rem; background:var(--text-gray);"><i class="fa-solid fa-filter"></i></button>
+                            </div>
+
+                            <input type="text" id="order-search-input" placeholder="Search UTR / Name..." oninput="filterOrdersTable(this.value)" style="margin:0; width:180px;">
+                            <button class="btn-primary" onclick="exportToCSV()" style="background:var(--success); margin:0;"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
+                        </div>
+                    </div>
+                    <table>
+                        <thead><tr>
+                            <th style="width:30px;"><input type="checkbox" id="master-chk" class="order-chk" onclick="toggleAllCheckboxes(this)"></th>
+                            <th>Date & ID</th><th>User Info</th><th>Service & Form Details</th><th>Paid & UTR</th><th>Status Control</th><th>Action</th>
+                        </tr></thead>
+                        <tbody id="orders-table-body"></tbody>
+                    </table>
+                    
+                    <div style="text-align: center; margin-top: 15px;">
+                        <button class="btn-primary" id="load-more-orders-btn" onclick="loadMoreOrders()" style="background:var(--sidebar-bg); display:none; margin: 0 auto;">Load Older Apps <i class="fa-solid fa-arrow-down"></i></button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="wallet" class="page" style="display:none;">
+                <div class="table-container">
+                    <h3>Wallet Add Money Requests</h3>
+                    <table><thead><tr><th>User Info</th><th>Amount</th><th>UTR Number</th><th>Status</th><th>Action</th></tr></thead><tbody id="wallet-table-body"></tbody></table>
+                </div>
+            </section>
+
+            <section id="tickets" class="page" style="display:none;">
+                <div class="table-container">
+                    <h3>Helpdesk Tickets</h3>
+                    <table><thead><tr><th>Shop Info</th><th>Issue</th><th>Reply</th><th>Action</th></tr></thead><tbody id="tickets-table-body"></tbody></table>
+                </div>
+            </section>
+
+            <section id="dashboard" class="page" style="display:none;">
+                <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:15px; margin-bottom:20px;">
+                    <div class="dashboard-box" style="margin-bottom:0;">
+                        <h3 style="color:var(--text-gray); font-size:0.9rem;">Today's Revenue</h3>
+                        <h2 id="stat-today-revenue" style="color:var(--success); font-size:1.8rem; margin-top:5px;">₹0</h2>
+                    </div>
+                    <div class="dashboard-box" style="margin-bottom:0;">
+                        <h3 style="color:var(--text-gray); font-size:0.9rem;">Total Revenue</h3>
+                        <h2 id="stat-revenue" style="color:var(--primary); font-size:1.8rem; margin-top:5px;">₹0</h2>
+                    </div>
+                    <div class="dashboard-box" style="margin-bottom:0;">
+                        <h3 style="color:var(--text-gray); font-size:0.9rem;">Pending Apps</h3>
+                        <h2 id="stat-pending-orders" style="color:var(--danger); font-size:1.8rem; margin-top:5px;">0</h2>
+                    </div>
+                    <div class="dashboard-box" style="margin-bottom:0;">
+                        <h3 style="color:var(--text-gray); font-size:0.9rem;">Total Users</h3>
+                        <h2 id="stat-customers" style="color:var(--accent); font-size:1.8rem; margin-top:5px;">0</h2>
+                    </div>
+                </div>
+                <div class="dashboard-box" style="height:350px; position:relative;"><canvas id="salesChart"></canvas></div>
+            </section>
+
+            <section id="customers" class="page" style="display:none;">
+                <div class="table-container">
+                    <h3>Registered Users Verification</h3>
+                    <table><thead><tr><th>Name/Shop</th><th>Email & UTR Info</th><th>Role & Balance</th><th>Status</th><th>Action</th></tr></thead><tbody id="customers-table-body"></tbody></table>
+                </div>
+            </section>
+
+            <section id="products" class="page" style="display:none;">
+                <div class="table-container">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+                        <h3>Manage Services</h3>
+                        <div>
+                            <button class="btn-primary" onclick="openHeadlineModal()" style="display:inline-flex; background:var(--accent); margin-right:10px;"><i class="fa-solid fa-layer-group"></i> Manage Headlines</button>
+                            <button class="btn-primary" onclick="openProductModal()" style="display:inline-flex;">+ Add Service</button>
+                        </div>
+                    </div>
+                    <table><thead><tr><th>Image</th><th>Service Name</th><th>Prices (R/D/AJO)</th><th>Action</th></tr></thead><tbody id="products-table-body"></tbody></table>
+                </div>
+            </section>
+
+            <section id="aitools" class="page" style="display:none;">
+                <div class="table-container">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:15px; align-items:center;">
+                        <h3>Manage AI Tools & HTML Embeds</h3>
+                        <button class="btn-primary" onclick="openAIToolModal()" style="background:var(--accent);"><i class="fa-solid fa-plus"></i> Add Tool</button>
+                    </div>
+                    <table>
+                        <thead><tr><th>Icon</th><th>Tool Name</th><th>Type</th><th>Action</th></tr></thead>
+                        <tbody id="aitools-table-body"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="categories" class="page" style="display:none;">
+                <div class="table-container">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:15px;"><h3>Categories</h3><button class="btn-primary" onclick="openCategoryModal()">+ Add</button></div>
+                    <table><tbody id="categories-table-body"></tbody></table>
+                </div>
+            </section>
+
+            <section id="promocodes" class="page" style="display:none;">
+                <div class="table-container">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:15px;"><h3>Promo Codes</h3><button class="btn-primary" onclick="openPromoModal()">+ Add Code</button></div>
+                    <table><thead><tr><th>Code</th><th>Discount (₹)</th><th>Action</th></tr></thead><tbody id="promocodes-table-body"></tbody></table>
+                </div>
+            </section>
+
+            <section id="banners" class="page" style="display:none;">
+                <div class="table-container">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:15px;"><h3>Banners</h3><button class="btn-primary" onclick="openBannerModal()">+ Add Banner</button></div>
+                    <table><tbody id="banners-table-body"></tbody></table>
+                </div>
+            </section>
+
+            <section id="settings" class="page" style="display:none;">
+                <div class="dashboard-box" style="border: 2px solid var(--danger); background: #fef2f2;">
+                    <h3 style="color:var(--danger);"><i class="fa-solid fa-power-off"></i> Emergency Control</h3>
+                    <label style="font-weight:bold; cursor:pointer;">
+                        <input type="checkbox" id="maintenance-active" onchange="toggleMaintenanceMode(this.checked)" style="width:auto; margin-right:10px;"> 
+                        Turn ON Maintenance Mode (Website will go offline)
+                    </label>
+                </div>
+
+                <div class="dashboard-box">
+                    <h3><i class="fa-solid fa-user-shield"></i> Manage Staff Access</h3>
+                    <p style="font-size:0.8rem; color:var(--text-gray); margin-bottom:10px;">To add a staff member, tell them to register on the main app, then paste their UID here.</p>
+                    <div style="display:flex; gap:10px;">
+                        <input type="text" id="new-staff-uid" placeholder="Paste User UID (from Users Verification table)">
+                        <button class="btn-primary" onclick="addStaffAccess()" style="width:auto; background:var(--primary);">Add Staff</button>
+                    </div>
+                    <div id="staff-list-container" style="margin-top:15px; border-top:1px solid var(--border); padding-top:15px;"></div>
+                </div>
+
+                <div class="dashboard-box">
+                    <h3>Portal Branding</h3>
+                    
+                    <label style="font-size:0.8rem; font-weight:bold; color:var(--text-gray);">1. Upload Main Logo</label>
+                    <input type="file" id="logo-file" onchange="uploadFile(this, 'app_settings/main_logo', 'logo-status')"> 
+                    <small id="logo-status"></small><br><br>
+                    
+                    <label style="font-size:0.8rem; font-weight:bold; color:var(--text-gray);">2. Adjust Logo Size (Height)</label>
+                    <div style="display:flex; gap:10px; align-items:center; margin-top:5px; margin-bottom: 20px;">
+                        <input type="range" id="logo-size-slider" min="30" max="150" value="60" oninput="document.getElementById('logo-size-val').innerText = this.value + 'px'; updateAdminLogoPreview(this.value);" style="flex:1; margin:0;">
+                        <span id="logo-size-val" style="font-weight:bold; min-width:50px; color:var(--primary);">60px</span>
+                        <button class="btn-primary" onclick="saveLogoSize()" style="margin:0; padding:8px 15px; width:auto; background:var(--success);">Save Size</button>
+                    </div>
+                    
+                    <label style="font-size:0.8rem; font-weight:bold; color:var(--text-gray);">3. Upload Certificate Stamp</label>
+                    <input type="file" id="cert-file" onchange="uploadFile(this, 'app_settings/certificate_url', 'cert-status')"> 
+                    <small id="cert-status"></small>
+                </div>
+                
+                <div class="dashboard-box">
+                    <h3><i class="fa-solid fa-gift"></i> Refer & Earn Setup</h3>
+                    <div style="display:flex; gap:15px;">
+                        <div><label>Signup Bonus (₹)</label><input type="number" id="ref-bonus" placeholder="e.g. 50"></div>
+                        <div><label>Form Fillup Commission (₹)</label><input type="number" id="ref-comm" placeholder="e.g. 10"></div>
+                    </div>
+                    <button class="btn-primary" onclick="saveReferralSettings()" style="width:auto; margin-top:10px;">Save Pricing</button>
+                </div>
+
+                <div class="dashboard-box">
+                    <h3>Live Offer Marquee & Popup</h3>
+                    <input type="text" id="marquee-input" placeholder="Breaking News Text..."><label><input type="checkbox" id="marquee-active"> Show Marquee</label><br><br>
+                    
+                    <div style="display:flex; gap:10px;">
+                        <input type="text" id="go-title" placeholder="Popup Title">
+                        <input type="text" id="go-code" placeholder="Promo Code">
+                    </div>
+                    <input type="text" id="go-desc" placeholder="Offer Description" style="margin-top: 10px;">
+                    <label><input type="checkbox" id="go-active"> Show Popup Offer</label>
+                    <button class="btn-primary" onclick="saveMarqueeAndOffer()" style="margin-top:10px; width:auto;">Update Alerts</button>
+                </div>
+
+                <div class="dashboard-box">
+                    <h3>Company Details (Invoice)</h3>
+                    <div style="display:flex; gap:10px;"><input type="text" id="inv-c-name" placeholder="Company Name"><input type="text" id="inv-c-gst" placeholder="GSTIN"></div>
+                    <div style="display:flex; gap:10px;"><input type="email" id="inv-c-email" placeholder="Email"><input type="tel" id="inv-c-phone" placeholder="Phone"></div>
+                    <textarea id="inv-c-address" placeholder="Address" rows="2"></textarea>
+                    <button class="btn-primary" onclick="saveInvoiceSettings()" style="width:auto;">Save Details</button>
+                </div>
+
+                <div class="dashboard-box">
+                    <h3>Slider Action Button</h3>
+                    <div style="display:flex; gap:10px;">
+                        <input type="text" id="sab-text" placeholder="Button Text (e.g. Join Now)">
+                        <input type="url" id="sab-link" placeholder="Button Link URL">
+                    </div>
+                    <label><input type="checkbox" id="sab-active"> Show Button on Slider</label>
+                    <button class="btn-primary" onclick="saveSliderButton()" style="margin-top:10px; width:auto;">Save Button</button>
+                </div>
+
+                <div class="dashboard-box">
+                    <h3>Legal Policies</h3>
+                    <textarea id="lp-terms" placeholder="Terms & Conditions" rows="2"></textarea>
+                    <textarea id="lp-privacy" placeholder="Privacy Policy" rows="2"></textarea>
+                    <textarea id="lp-refund" placeholder="Refund Policy" rows="2"></textarea>
+                    <button class="btn-primary" onclick="saveLegalPolicies()" style="margin-top:10px; width:auto;">Save Policies</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="headline-modal" class="modal-overlay">
+        <div class="modal-content">
+            <i class="fa-solid fa-xmark close-btn" onclick="closeModal('headline-modal')"></i>
+            <h3 style="margin-bottom: 15px;"><i class="fa-solid fa-layer-group" style="color:var(--accent);"></i> Manage Services Headlines</h3>
+            
+            <div style="background:#e0f2fe; padding:15px; border-radius:10px; border:1px solid #bae6fd; margin-bottom:15px;">
+                <h4 style="margin-bottom: 10px; color:#1e40af;">1. Main Page Static Headlines</h4>
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                    <div><label style="font-size:0.8rem; font-weight:bold;">AI Tools Section Title</label><input type="text" id="set-title-aitools" placeholder="AI Tools & Links" style="margin-bottom:0;"></div>
+                    <div><label style="font-size:0.8rem; font-weight:bold;">Top Services Section Title</label><input type="text" id="set-title-top" placeholder="Top Services" style="margin-bottom:0;"></div>
+                    <div><label style="font-size:0.8rem; font-weight:bold;">All Services Section Title</label><input type="text" id="set-title-all" placeholder="All Online Services" style="margin-bottom:0;"></div>
+                    <button class="btn-primary" onclick="saveMainHeadlines()" style="width:auto; align-self:flex-start;">Update Main Headlines</button>
+                </div>
+            </div>
+
+            <div style="background:#f8fafc; padding:15px; border-radius:10px; border:1px dashed #cbd5e1; margin-bottom:15px;">
+                <h4 style="margin-bottom: 10px; color:#475569;">2. Add/Edit Custom Group Headlines</h4>
+                <label style="font-size:0.8rem; font-weight:bold;">Upload Icon/Image (Optional)</label>
+                <input type="file" id="h-img-file" onchange="uploadHeadlineFile(this)" style="margin-bottom:10px;">
+                <label style="font-size:0.8rem; font-weight:bold;">Headline Title</label>
+                <div style="display:flex; gap:10px;">
+                    <input type="text" id="h-title" placeholder="e.g. Trending PAN Services" style="margin:0;">
+                    <button class="btn-primary" id="save-headline-btn" onclick="saveHeadline()" style="margin:0; width:auto;">Save</button>
+                    <button class="btn-primary" id="cancel-headline-btn" onclick="resetHeadlineForm()" style="margin:0; width:auto; background:var(--text-gray); display:none;">Cancel</button>
+                </div>
+            </div>
+
+            <table style="margin-top:10px;">
+                <thead><tr><th>Icon</th><th>Custom Headline</th><th>Action</th></tr></thead>
+                <tbody id="headlines-table-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="result-modal" class="modal-overlay"><div class="modal-content text-center"><i class="fa-solid fa-xmark close-btn" onclick="closeModal('result-modal')"></i><h3>Upload Final Document</h3><input type="file" id="result-file" accept="application/pdf,image/*"><button class="btn-primary" onclick="saveResultDocument()" style="width:100%;">Upload & Complete</button></div></div>
+    <div id="reply-modal" class="modal-overlay"><div class="modal-content"><i class="fa-solid fa-xmark close-btn" onclick="closeModal('reply-modal')"></i><h3>Reply Ticket</h3><textarea id="reply-msg" rows="3"></textarea><button class="btn-primary" onclick="saveReply()">Send Reply</button></div></div>
+    <div id="custom-image-modal" class="modal-overlay" onclick="closeModal('custom-image-modal')"><div class="modal-content"><h3 style="margin-bottom: 15px;">Customer Documents</h3><div id="custom-image-view-container" style="display:flex; flex-wrap:wrap; gap:10px;"></div></div></div>
+    
+    <div id="user-modal" class="modal-overlay">
+        <div class="modal-content">
+            <i class="fa-solid fa-xmark close-btn" onclick="closeModal('user-modal')"></i><h3 id="user-modal-title">Edit User</h3>
+            <input type="text" id="u-shop" placeholder="Shop Name">
+            <input type="text" id="u-name" placeholder="Name">
+            <select id="u-role"><option value="Retailer">Retailer</option><option value="Distributor">Distributor</option><option value="AJ Officer">AJ Officer</option></select>
+            <select id="u-status"><option value="Pending">Pending</option><option value="Active">Active</option></select>
+            <button class="btn-primary" onclick="saveUser()" style="width:100%; background:var(--success);">Update User Details</button>
+        </div>
+    </div>
+    
+    <div id="product-modal" class="modal-overlay">
+        <div class="modal-content">
+            <i class="fa-solid fa-xmark close-btn" onclick="closeModal('product-modal')"></i>
+            <h3>Add Service</h3>
+            <input type="file" id="p-img-file" onchange="uploadTempFile(this)">
+            <input type="text" id="p-name" placeholder="Service Name">
+            <div style="display:flex; gap:10px;"><input type="number" id="p-price-ret" placeholder="Retailer Price (₹)"><input type="number" id="p-price-dist" placeholder="Distributor Price (₹)"><input type="number" id="p-price-dm" placeholder="AJ Officer Price (₹)"></div>
+            
+            <div style="display:flex; gap:10px;">
+                <select id="p-cat"><option value="">Select Category</option></select>
+                <select id="p-headline"><option value="">No Custom Headline</option></select>
+            </div>
+
+            <textarea id="p-desc" placeholder="Service Description" rows="2"></textarea>
+            
+            <div style="background:#f1f5f9; padding:15px; border-radius:8px; margin-bottom:10px; border:1px solid var(--border);">
+                <p style="margin:0 0 10px 0; font-weight:bold;">Custom Action Buttons</p>
+                <div style="display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap;">
+                    <div style="flex:1; min-width:200px;">
+                        <label style="font-size:0.8rem; font-weight:bold; color:var(--primary);">Button 1 (Primary)</label>
+                        <input type="text" id="p-btn1-text" placeholder="Button Text (e.g. Apply Now)" value="Apply Now">
+                        <select id="p-btn1-type" onchange="document.getElementById('p-btn1-link').style.display = this.value === 'link' ? 'block' : 'none'">
+                            <option value="form">Open Custom Form</option>
+                            <option value="link">Open URL Link</option>
+                        </select>
+                        <input type="url" id="p-btn1-link" placeholder="Button 1 URL" style="display:none;">
+                    </div>
+                    <div style="flex:1; min-width:200px;">
+                        <label style="font-size:0.8rem; font-weight:bold; color:var(--primary);">
+                            <input type="checkbox" id="p-btn2-show" style="width:auto; margin-right:5px; transform:scale(1.2);"> Show Button 2 (Secondary)
+                        </label>
+                        <input type="text" id="p-btn2-text" placeholder="Button Text (e.g. Open Link)" value="Open Link">
+                        <select id="p-btn2-type" onchange="document.getElementById('p-btn2-link').style.display = this.value === 'link' ? 'block' : 'none'">
+                            <option value="link">Open URL Link</option>
+                            <option value="form">Open Custom Form</option>
+                        </select>
+                        <input type="url" id="p-btn2-link" placeholder="Button 2 URL" style="display:block;">
+                    </div>
+                </div>
+            </div>
+            
+            <input type="url" id="p-yt-link" placeholder="YouTube Video Tutorial Link (Optional)">
+            
+            <div style="background:#f1f5f9; padding:15px; border-radius:8px; margin-bottom:10px;">
+                <p style="margin:0 0 10px 0; font-weight:bold;">Custom Form Builder</p>
+                <div id="custom-fields-container" style="margin-bottom:10px;"></div>
+                <div style="display:flex; gap:5px;">
+                    <input type="text" id="new-field-label" placeholder="Label" style="margin:0;">
+                    <select id="new-field-type" onchange="document.getElementById('new-field-opts').style.display = (this.value==='select'||this.value==='dynamic_doc')?'block':'none'" style="margin:0;">
+                        <option value="text">Text</option><option value="number">Number</option><option value="date">Date</option><option value="select">Dropdown</option><option value="file">File Upload</option><option value="dynamic_doc">Auto Upload Dropdown</option>
+                    </select>
+                    <button type="button" onclick="addCustomFieldUI()" class="btn-primary" style="margin:0;">Add</button>
+                </div>
+                <input type="text" id="new-field-opts" placeholder="Options (comma separated)" style="display:none; margin-top:5px;">
+            </div>
+            <button class="btn-primary" onclick="saveProduct()">Save Service</button>
+        </div>
+    </div>
+
+    <div id="aitool-modal" class="modal-overlay">
+        <div class="modal-content">
+            <i class="fa-solid fa-xmark close-btn" onclick="closeModal('aitool-modal')"></i>
+            <h3 id="aitool-modal-title">Add AI Tool</h3>
+            <label style="font-size:0.8rem; font-weight:bold;">Tool Icon/Image</label>
+            <input type="file" id="ai-img-file" onchange="uploadTempFile(this)">
+            <input type="text" id="ai-name" placeholder="Tool Name (e.g. Photo Resizer)">
+            <input type="url" id="ai-link" placeholder="Tool External URL (Optional)">
+            <p style="font-size:0.8rem; text-align:center; font-weight:bold; margin:5px 0;">-- OR --</p>
+            <textarea id="ai-embed" placeholder="Paste HTML / Iframe Embed Code Here" rows="3"></textarea>
+            <textarea id="ai-desc" placeholder="Brief Description" rows="2"></textarea>
+            <button class="btn-primary" onclick="saveAITool()" style="width:100%;">Save Tool</button>
+        </div>
+    </div>
+    
+    <div id="promo-modal" class="modal-overlay"><div class="modal-content"><i class="fa-solid fa-xmark close-btn" onclick="closeModal('promo-modal')"></i><h3>Add Promo Code</h3><input type="text" id="promo-code-val" placeholder="CODE"><input type="number" id="promo-discount-val" placeholder="Discount ₹"><button class="btn-primary" onclick="savePromoCode()">Save Code</button></div></div>
+    <div id="category-modal" class="modal-overlay"><div class="modal-content"><i class="fa-solid fa-xmark close-btn" onclick="closeModal('category-modal')"></i><h3>Add Category</h3><input type="file" id="c-file" onchange="uploadTempFile(this)"><input type="text" id="c-name" placeholder="Category Name"><button class="btn-primary" onclick="saveCategory()">Save</button></div></div>
+    <div id="banner-modal" class="modal-overlay"><div class="modal-content"><i class="fa-solid fa-xmark close-btn" onclick="closeModal('banner-modal')"></i><h3>Add Banner</h3><input type="file" id="b-file" onchange="uploadTempFile(this)"><input type="text" id="b-title" placeholder="Title"><input type="url" id="b-link" placeholder="Link URL"><button class="btn-primary" onclick="saveBanner()">Save</button></div></div>
+
+    <script>
+        const firebaseConfig = { apiKey: "AIzaSyAw_-3KzAyG_i8vBb43xqD6gHUsDKupmxk", authDomain: "aj-sarvices-a8554.firebaseapp.com", databaseURL: "https://aj-sarvices-a8554-default-rtdb.firebaseio.com", projectId: "aj-sarvices-a8554", storageBucket: "aj-sarvices-a8554.firebasestorage.app", messagingSenderId: "109804150730", appId: "1:109804150730:web:e75006f44ef5e120d43933" };
+        
+        // UNIQUE APP INITIALIZATION FOR ADMIN PORTAL (ISOLATED SESSION)
+        const adminApp = firebase.initializeApp(firebaseConfig, "ADMIN_PORTAL");
+        const db = adminApp.database();
+        const auth = adminApp.auth(); 
+        const IMGBB_API_KEY = "122cc16740d69ce4f60b53f0effed6c1";
+        
+        const ADMIN_EMAIL = "ajsarvices@gmail.com"; 
+        let isSuperAdmin = false;
+        
+        let masterOrders=[], currentOrdersToDisplay=[], allCustomersData={}, allProductsData={}, currentCustomFields={}, allAITools={}, allAdminProducts={};
+        let editProductId=null, editUserId=null, editAIToolId=null, tempImgUrl="";
+        let salesChartInstance = null; let appLogoUrl = "https://via.placeholder.com/150x80?text=AJ+LOGO"; let compCertUrl = "";
+        let currentOrderId="", currentTicketId="", currentTicketUid="", currentResultUrl="";
+        let globalChartData = {};
+        let adminDataLoaded = false;
+        
+        let allHeadlinesData = {};
+        let editHeadlineId = null;
+        let tempHeadlineImgUrl = ""; 
+        
+        let orderLimit = 100;
+
+        function escapeHTML(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>'"]/g, function(tag) {
+                const chars = { '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' };
+                return chars[tag] || tag;
+            });
+        }
+
+        function showGlobalLoader() { const loader = document.getElementById('global-loader'); if(loader) { loader.style.display = 'flex'; loader.style.opacity = '1'; } }
+        function hideGlobalLoader() { const loader = document.getElementById('global-loader'); if(loader) { loader.style.opacity = '0'; setTimeout(() => loader.style.display = 'none', 400); } }
+
+        if(localStorage.getItem('ajAdminLogged') === 'true') { showGlobalLoader(); }
+
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                isSuperAdmin = (user.email && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase());
+                if(!isSuperAdmin) {
+                    db.ref('app_settings/staff_users/'+user.uid).once('value').then(snap => {
+                        if(snap.exists()) { setupAdminPanel(true); } else { blockAdminAccess("Access Denied! You are not an Admin or Staff."); }
+                    }).catch(e => { blockAdminAccess("Permission check failed."); });
+                } else { setupAdminPanel(false); }
+            } else { blockAdminAccess(); }
+        });
+
+        function blockAdminAccess(errorMsg = null) {
+            localStorage.removeItem('ajAdminLogged');
+            document.getElementById('admin-layout').style.display = 'none';
+            document.getElementById('login-screen').style.display = 'flex';
+            hideGlobalLoader();
+            const err = document.getElementById('login-error');
+            if(errorMsg) { err.innerHTML = `<b>Restriction</b><br>${errorMsg}`; err.style.display = 'block'; } else { err.style.display = 'none'; }
+        }
+
+        function setupAdminPanel(isStaff) {
+            localStorage.setItem('ajAdminLogged', 'true');
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('admin-layout').style.display = 'block';
+            if(isStaff) {
+                document.getElementById('admin-role-badge').innerText = "Staff Access";
+                document.getElementById('nav-wallet').style.display = 'none'; document.getElementById('nav-dashboard').style.display = 'none'; document.getElementById('nav-customers').style.display = 'none'; document.getElementById('nav-settings').style.display = 'none';
+            } else { document.getElementById('admin-role-badge').innerText = "Super Admin"; }
+            if (!adminDataLoaded) { loadAdminData(isStaff); adminDataLoaded = true; }
+            setTimeout(hideGlobalLoader, 800);
+        }
+
+        function loginAdmin() {
+            const em = document.getElementById('admin-email').value.trim(); const ps = document.getElementById('admin-password').value.trim(); const err = document.getElementById('login-error'); const btn = document.getElementById('login-btn'); 
+            if(!em || !ps) { err.innerHTML = "<b>Login Failed!</b><br>Please enter Email & Password!"; err.style.display = 'block'; return; }
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Checking...`; err.style.display = 'none'; showGlobalLoader();
+            
+            auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
+                return auth.signInWithEmailAndPassword(em, ps);
+            }).then(() => {
+                localStorage.setItem('ajAdminLogged', 'true'); // Only set Admin Session
+            }).catch((error) => { 
+                hideGlobalLoader(); err.innerHTML = "<b>Login Failed!</b><br>Wrong credentials or account not found."; err.style.display = 'block'; btn.innerHTML = `Login Securely`; 
+            });
+        }
+
+        function logoutAdmin(){ 
+            localStorage.removeItem('ajAdminLogged'); // Clear Admin Session only
+            auth.signOut().then(() => { location.reload(); }); 
+        }
+        function switchPage(id, el) { document.querySelectorAll('.page').forEach(p=>p.style.display='none'); document.getElementById(id).style.display='block'; document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active')); el.classList.add('active'); document.getElementById('page-title').innerText=el.innerText.trim(); if(id === 'dashboard') { setTimeout(() => renderSalesChart(globalChartData), 200); } }
+        function openModal(id){ document.getElementById(id).style.display='flex'; } function closeModal(id){ document.getElementById(id).style.display='none'; }
+        function exportToCSV() { let csvContent = "data:text/csv;charset=utf-8,ID,Date,User,Service,Price,Status\n"; currentOrdersToDisplay.forEach(o => { csvContent += `${o.key},${o.date},${escapeHTML(o.userName)},${escapeHTML(o.title)},${o.price},${o.status}\n`; }); const encodedUri = encodeURI(csvContent); const link = document.createElement("a"); link.setAttribute("href", encodedUri); link.setAttribute("download", "AJ_Applications.csv"); document.body.appendChild(link); link.click(); }
+        function sendNotification(uid, msg){ db.ref('notifications/'+uid).push({msg:msg, date:new Date().toLocaleDateString()}); }
+        function copyText(txt) { navigator.clipboard.writeText(txt).then(()=> { let alertDiv = document.createElement('div'); alertDiv.innerHTML = "Copied: " + escapeHTML(txt); alertDiv.style.cssText = "position:fixed; bottom:20px; right:20px; background:var(--success); color:#fff; padding:10px 20px; border-radius:5px; z-index:9999;"; document.body.appendChild(alertDiv); setTimeout(()=>alertDiv.remove(), 2000); }); }
+
+        function renderOrdersTable(ordersData) {
+            currentOrdersToDisplay = ordersData; const b = document.getElementById('orders-table-body'); b.innerHTML = '';
+            
+            ordersData.forEach(o => {
+                let statSel=`<select onchange="updateStatus('${o.key}', '${o.userId}', this.value)" style="padding:4px; margin-top:5px; border-radius:4px;"><option value="Pending" ${o.status==='Pending'?'selected':''}>Pending</option><option value="Processing" ${o.status==='Processing'?'selected':''}>Processing</option><option value="Delivered" ${o.status==='Delivered'?'selected':''}>Completed</option><option value="Cancelled" ${o.status==='Cancelled'?'selected':''}>Cancelled</option></select>`;
+                let resBtn = o.resultUrl ? `<a href="${escapeHTML(o.resultUrl)}" target="_blank" style="color:var(--success); font-size:0.8rem; font-weight:bold;">View Sent</a>` : `<button onclick="openResultModal('${o.key}', '${o.userId}')" style="padding:6px; font-size:0.75rem; background:var(--primary); color:#fff; border:none; border-radius:4px; margin-top:5px;">Upload Result</button>`;
+                let extraInfo = o.extraDetails ? `<div style="background:#f1f5f9; padding:6px; font-size:0.8rem; margin-top:6px; border-radius:6px; color:#334155;">${escapeHTML(o.extraDetails)}</div>` : '';
+                let docs = o.uploadedDocs ? `<button onclick="viewCustomImages('${o.key}')" class="action-btn" style="font-size:0.8rem; margin-top:5px;"><i class="fa-solid fa-file"></i> Docs (${o.uploadedDocs.length})</button>` : '';
+                b.innerHTML+=`<tr><td><input type="checkbox" class="order-chk" value="${o.key}" data-uid="${o.userId}"></td><td>${o.key.slice(-5)}<br><small>${escapeHTML(o.date)}</small></td><td><b>${escapeHTML(o.userName)}</b><br><small>${escapeHTML(o.userEmail||'')}</small></td><td><b>${escapeHTML(o.title)}</b>${extraInfo}${docs}</td><td><b style="color:var(--primary);">₹${o.price}</b><br><code class="copy-utr" onclick="copyText('${escapeHTML(o.utr)}')">${escapeHTML(o.utr)}</code></td><td><span class="status-badge ${o.status}">${escapeHTML(o.status)}</span><br>${statSel}<br>${resBtn}</td><td><button class="action-btn" onclick="deleteItem('orders','${o.key}')"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`;
+            });
+            document.getElementById('master-chk').checked = false;
+        }
+
+        function loadMoreOrders() { orderLimit += 100; loadAdminData(false); } // Refresh data with new limit
+
+        db.ref('service_headlines').on('value', s => {
+            allHeadlinesData = {}; const b = document.getElementById('headlines-table-body'); const sel = document.getElementById('p-headline');
+            if(b) b.innerHTML = ''; if(sel) sel.innerHTML = '<option value="">No Custom Headline</option>';
+            if(s.exists()) {
+                s.forEach(c => {
+                    const h = c.val(); allHeadlinesData[c.key] = h;
+                    let imgDisplay = h.imageUrl ? `<img src="${h.imageUrl}" width="30" style="border-radius:4px;">` : `<i class="fa-solid fa-layer-group"></i>`;
+                    if(b) b.innerHTML += `<tr><td>${imgDisplay}</td><td><b>${escapeHTML(h.title)}</b></td><td><button class="action-btn" onclick="editHeadline('${c.key}')"><i class="fa-solid fa-pen"></i></button><button class="action-btn" onclick="deleteItem('service_headlines','${c.key}')"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`;
+                    if(sel) sel.innerHTML += `<option value="${escapeHTML(h.title)}">${escapeHTML(h.title)}</option>`;
+                });
+            }
+        });
+
+        function saveMainHeadlines() {
+            db.ref('app_settings/section_titles').set({
+                aitools: document.getElementById('set-title-aitools').value || "AI Tools & Links",
+                top: document.getElementById('set-title-top').value || "Top Services",
+                all: document.getElementById('set-title-all').value || "All Online Services"
+            }).then(() => alert("Main Headlines Saved!"));
+        }
+
+        function uploadFile(inp, path, statusId){ 
+            const f=inp.files[0]; 
+            if(!f) return;
+            const statusEl = document.getElementById(statusId);
+            const origText = statusEl.innerText;
+            statusEl.innerText = " Uploading... Please wait.";
+            statusEl.style.color = "var(--accent)";
+            const fd=new FormData(); 
+            fd.append('image',f); 
+            fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`,{method:'POST',body:fd})
+            .then(r=>r.json())
+            .then(d=>{ 
+                db.ref(path).set(d.data.url).then(() => {
+                    statusEl.innerText = " Saved to Server!";
+                    statusEl.style.color = "var(--success)";
+                    setTimeout(()=>{ statusEl.innerText = origText; statusEl.style.color = ""; }, 3000);
+                }); 
+            }).catch(e => {
+                statusEl.innerText = " Upload Failed!";
+                statusEl.style.color = "red";
+            }); 
+        }
+
+        function uploadHeadlineFile(inp) {
+            const f = inp.files[0]; if(!f) return;
+            document.getElementById('save-headline-btn').innerText = "Uploading..."; document.getElementById('save-headline-btn').disabled = true;
+            const fd = new FormData(); fd.append('image', f);
+            fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {method:'POST', body:fd})
+            .then(r=>r.json()).then(d=>{ tempHeadlineImgUrl = d.data.url; alert("Icon Uploaded! Click Save/Update."); document.getElementById('save-headline-btn').innerText = editHeadlineId ? "Update" : "Save"; document.getElementById('save-headline-btn').disabled = false; })
+            .catch(e=>{ alert("Upload failed!"); document.getElementById('save-headline-btn').innerText = editHeadlineId ? "Update" : "Save"; document.getElementById('save-headline-btn').disabled = false; });
+        }
+
+        function openHeadlineModal() { resetHeadlineForm(); openModal('headline-modal'); }
+
+        function saveHeadline() {
+            const t = document.getElementById('h-title').value.trim();
+            if(!t) return alert("Enter headline title");
+            const btn = document.getElementById('save-headline-btn'); btn.innerText = "Saving...";
+            const data = { title: t, imageUrl: tempHeadlineImgUrl };
+            
+            if(editHeadlineId) {
+                db.ref('service_headlines/'+editHeadlineId).update(data).then(()=>{ resetHeadlineForm(); alert("Headline Updated!"); });
+            } else {
+                db.ref('service_headlines').push(data).then(()=>{ resetHeadlineForm(); alert("Headline Added!"); });
+            }
+        }
+
+        function resetHeadlineForm() {
+            editHeadlineId = null; document.getElementById('h-title').value = ''; document.getElementById('h-img-file').value = ''; tempHeadlineImgUrl = '';
+            document.getElementById('save-headline-btn').innerText = 'Save'; document.getElementById('cancel-headline-btn').style.display = 'none';
+        }
+
+        function editHeadline(key) {
+            editHeadlineId = key; const input = document.getElementById('h-title');
+            input.value = allHeadlinesData[key].title; tempHeadlineImgUrl = allHeadlinesData[key].imageUrl || "";
+            document.getElementById('h-img-file').value = ''; 
+            input.focus(); input.scrollIntoView({ behavior: 'smooth', block: 'center' }); 
+            document.getElementById('save-headline-btn').innerText = 'Update'; document.getElementById('cancel-headline-btn').style.display = 'inline-block';
+        }
+
+        // Live preview of admin logo size change
+        function updateAdminLogoPreview(size) {
+            document.querySelectorAll('.dynamic-admin-logo').forEach(img => {
+                img.style.height = size + 'px';
+                img.style.width = 'auto'; // maintain aspect ratio
+            });
+        }
+
+        // Save logo size to database
+        function saveLogoSize() {
+            const size = document.getElementById('logo-size-slider').value;
+            db.ref('app_settings/logo_size').set(size).then(() => {
+                alert("Logo Size Saved successfully!");
+            });
+        }
+
+        function loadAdminData(isStaff) {
+            db.ref('orders').limitToLast(orderLimit).on('value', s=>{
+                masterOrders=[]; let rev=0, pendingCount=0, todayRev=0;
+                const todayStr = new Date().toLocaleDateString('en-GB');
+                if(s.exists()){ s.forEach(c=>{ 
+                    const o=c.val(); o.key=c.key; masterOrders.push(o); 
+                    if(o.status==='Delivered') rev+=Number(o.price)||0; 
+                    if(o.status==='Pending') pendingCount++;
+                    let orderDateObj = new Date(o.timestamp || o.date); if(isNaN(orderDateObj.getTime())) orderDateObj = new Date();
+                    const formattedOrderDay = orderDateObj.toLocaleDateString('en-GB');
+                    if(o.status==='Delivered' && formattedOrderDay === todayStr) { todayRev += Number(o.price)||0; }
+                }); } 
+                masterOrders.reverse();
+                if(!isStaff && document.getElementById('stat-revenue')) {
+                    document.getElementById('stat-revenue').innerText="₹"+rev; document.getElementById('stat-today-revenue').innerText="₹"+todayRev; document.getElementById('stat-pending-orders').innerText=pendingCount; document.getElementById('stat-orders').innerText=masterOrders.length;
+                    const last7Days = [...Array(7)].map((_, i) => { const d = new Date(); d.setDate(d.getDate() - i); return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }); }).reverse();
+                    let chartDataMap = {}; last7Days.forEach(day => chartDataMap[day] = 0);
+                    masterOrders.forEach(o=>{ let orderDateObj = new Date(o.timestamp || o.date); if(isNaN(orderDateObj.getTime())) orderDateObj = new Date(); const formattedOrderDay = orderDateObj.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }); if(chartDataMap[formattedOrderDay] !== undefined) { chartDataMap[formattedOrderDay] += (Number(o.price)||0); } });
+                    globalChartData = chartDataMap; if(document.getElementById('dashboard').classList.contains('active')) { renderSalesChart(globalChartData); }
+                }
+                
+                if(masterOrders.length >= orderLimit) {
+                    document.getElementById('load-more-orders-btn').style.display = 'block';
+                } else {
+                    document.getElementById('load-more-orders-btn').style.display = 'none';
+                }
+
+                if(document.getElementById('filter-start').value || document.getElementById('order-search-input').value) { filterByDate(); } else { renderOrdersTable(masterOrders); }
+            });
+
+            if(!isStaff) {
+                db.ref('customers').on('value', s => {
+                    const b = document.getElementById('customers-table-body'); if(!b) return; b.innerHTML = ''; let cc = 0; allCustomersData = {};
+                    if(s.exists()){ s.forEach(c => { const u = c.val(); if(!u) return; allCustomersData[c.key] = u; cc++; let shop = u.shopName || 'N/A'; let name = u.name || 'N/A'; let email = u.email || 'N/A'; let utr = u.registrationUtr || 'N/A'; let role = u.role || 'User'; let bal = u.walletBalance || 0; let status = u.accountStatus || 'Pending'; let actBtn = status === "Pending" ? `<button class="action-btn" onclick="db.ref('customers/${c.key}').update({accountStatus:'Active'})" title="Approve Customer"><i class="fa-solid fa-check" style="color:green;"></i></button>` : ''; b.innerHTML += `<tr><td><b>${escapeHTML(shop)}</b><br><small>${escapeHTML(name)}</small><br><small style="color:#cbd5e1;">UID: ${c.key}</small></td><td>${escapeHTML(email)}<br><code>UTR: ${escapeHTML(utr)}</code></td><td>${escapeHTML(role)}<br>Bal: ₹${bal}</td><td><span style="font-weight:bold; color:${status==='Active'?'green':'red'}">${escapeHTML(status)}</span></td><td>${actBtn}<button class="action-btn" onclick="openEditUser('${c.key}')"><i class="fa-solid fa-pen"></i></button><button class="action-btn" onclick="deleteItem('customers', '${c.key}')"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; }); } else { b.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px;">No Users Found in Database</td></tr>`; }
+                    if(document.getElementById('stat-customers')) document.getElementById('stat-customers').innerText = cc;
+                });
+                db.ref('wallet_requests').on('value', s=>{ const b=document.getElementById('wallet-table-body'); b.innerHTML=''; s.forEach(c=>{ const w=c.val(); if(w.status==='Pending'){ b.innerHTML+=`<tr><td>${escapeHTML(w.name)}</td><td>₹${w.amount}</td><td>${escapeHTML(w.utr)}</td><td><button onclick="approveWallet('${c.key}','${w.uid}',${w.amount})" style="background:var(--success); color:#fff; border:none; padding:5px; border-radius:5px;">Approve</button></td><td><button onclick="db.ref('wallet_requests/${c.key}').update({status:'Rejected'})" style="background:red; color:#fff; border:none; padding:5px; border-radius:5px;">Reject</button></td></tr>`; } }); });
+                db.ref('app_settings').on('value', snap => { 
+                    if(snap.exists()) { 
+                        let data = snap.val(); if(data.maintenance_mode !== undefined) document.getElementById('maintenance-active').checked = data.maintenance_mode;
+                        const staffContainer = document.getElementById('staff-list-container'); if(staffContainer) { staffContainer.innerHTML = ''; if(data.staff_users) { Object.keys(data.staff_users).forEach(uid => { staffContainer.innerHTML += `<div style="display:flex; justify-content:space-between; padding:8px; background:#f1f5f9; border-radius:6px; margin-bottom:5px;"><span><b>UID:</b> ${escapeHTML(uid)}</span> <i class="fa-solid fa-trash" style="color:red; cursor:pointer;" onclick="removeStaffAccess('${uid}')"></i></div>`; }); } }
+                        
+                        if(data.section_titles) {
+                            if(document.getElementById('set-title-aitools')) document.getElementById('set-title-aitools').value = data.section_titles.aitools || "";
+                            if(document.getElementById('set-title-top')) document.getElementById('set-title-top').value = data.section_titles.top || "";
+                            if(document.getElementById('set-title-all')) document.getElementById('set-title-all').value = data.section_titles.all || "";
+                        }
+
+                        if(data.marquee && document.getElementById('marquee-input')) { document.getElementById('marquee-input').value = data.marquee.text || ''; document.getElementById('marquee-active').checked = data.marquee.active || false; }
+                        if(data.refer_earn && document.getElementById('ref-bonus')) { document.getElementById('ref-bonus').value = data.refer_earn.signupBonus || 50; document.getElementById('ref-comm').value = data.refer_earn.formCommission || 10; }
+                        
+                        if(data.main_logo) { 
+                            appLogoUrl = data.main_logo; 
+                            document.querySelectorAll('.dynamic-admin-logo').forEach(el => {
+                                if(el.tagName.toLowerCase() === 'link') el.href = appLogoUrl;
+                                else el.src = appLogoUrl;
+                            }); 
+                        }
+
+                        if(data.logo_size) {
+                            if(document.getElementById('logo-size-slider')) {
+                                document.getElementById('logo-size-slider').value = data.logo_size;
+                                document.getElementById('logo-size-val').innerText = data.logo_size + 'px';
+                            }
+                            updateAdminLogoPreview(data.logo_size);
+                        }
+                        
+                        if(data.certificate_url) { compCertUrl = data.certificate_url; }
+                        if(data.invoice_details && document.getElementById('inv-c-name')) { const inv = data.invoice_details; document.getElementById('inv-c-name').value=inv.name||''; document.getElementById('inv-c-address').value=inv.address||''; document.getElementById('inv-c-email').value=inv.email||''; document.getElementById('inv-c-phone').value=inv.phone||''; document.getElementById('inv-c-gst').value=inv.gst||''; }
+                        if(data.legal_policies) {
+                            if(document.getElementById('lp-terms')) document.getElementById('lp-terms').value = data.legal_policies.terms || "";
+                            if(document.getElementById('lp-privacy')) document.getElementById('lp-privacy').value = data.legal_policies.privacy || "";
+                            if(document.getElementById('lp-refund')) document.getElementById('lp-refund').value = data.legal_policies.refund || "";
+                        }
+                    } 
+                });
+            }
+            db.ref('tickets').on('value', s=>{ const b=document.getElementById('tickets-table-body'); b.innerHTML=''; s.forEach(c=>{ const t=c.val(); b.innerHTML+=`<tr><td>${escapeHTML(t.shop)}</td><td>${escapeHTML(t.msg)}</td><td>${escapeHTML(t.reply||'No Reply')}</td><td><button onclick="openReplyModal('${c.key}', '${t.uid}')" style="background:var(--primary); color:#fff; border:none; padding:5px; border-radius:5px;">Reply</button></td></tr>`; }); });
+            db.ref('products').on('value', s=>{ const b=document.getElementById('products-table-body'); b.innerHTML=''; allAdminProducts={}; s.forEach(c=>{ const p=c.val()||{}; allAdminProducts[c.key]=p; b.innerHTML+=`<tr><td><img src="${p.imageUrl}" width="50" style="border-radius:8px;"></td><td><b>${escapeHTML(p.title)}</b><br><small>${escapeHTML(p.category)}</small></td><td>₹${p.priceRet} / ₹${p.priceDist} / ₹${p.priceDM}</td><td><button class="action-btn" onclick="openEditProduct('${c.key}')"><i class="fa-solid fa-pen"></i></button><button class="action-btn" onclick="db.ref('products/${c.key}').remove()"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; }); });
+            db.ref('ai_tools').on('value', s=>{ const b=document.getElementById('aitools-table-body'); b.innerHTML=''; allAITools={}; if(s.exists()){ s.forEach(c=>{ const t=c.val()||{}; allAITools[c.key]=t; let linkText = t.embed ? `<span style="color:var(--success); font-weight:bold;">HTML Embedded</span>` : (t.link ? `<a href="${escapeHTML(t.link)}" target="_blank" style="color:var(--primary); font-weight:bold;">View Link</a>` : 'No Link'); b.innerHTML+=`<tr><td><img src="${t.imageUrl}" onerror="this.src='logo.png'" width="45" style="border-radius:8px; border:1px solid var(--border-color);"></td><td><b>${escapeHTML(t.title)}</b><br><small>${escapeHTML(t.description)}</small></td><td>${linkText}</td><td><button class="action-btn" onclick="openEditAITool('${c.key}')"><i class="fa-solid fa-pen"></i></button><button class="action-btn" onclick="deleteItem('ai_tools','${c.key}')"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; }); } });
+            db.ref('categories').on('value', s=>{ const b=document.getElementById('categories-table-body'); b.innerHTML=''; const sel=document.getElementById('p-cat'); if(sel) sel.innerHTML='<option value="">Select Category</option>'; s.forEach(c=>{ const cat=c.val(); b.innerHTML+=`<tr><td><img src="${cat.imageUrl}" width="40"></td><td>${escapeHTML(cat.title)}</td><td><button class="action-btn" onclick="db.ref('categories/${c.key}').remove()"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; if(sel) sel.innerHTML+=`<option value="${escapeHTML(cat.title)}">${escapeHTML(cat.title)}</option>`; }); });
+            db.ref('banners').on('value', s=>{ const b=document.getElementById('banners-table-body'); b.innerHTML=''; s.forEach(c=>{ b.innerHTML+=`<tr><td><img src="${c.val().imageUrl}" width="100"></td><td>${escapeHTML(c.val().title)}</td><td><button class="action-btn" onclick="db.ref('banners/${c.key}').remove()"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; }); });
+            db.ref('promocodes').on('value', s => { const b=document.getElementById('promocodes-table-body'); if(b){ b.innerHTML=''; s.forEach(c => { b.innerHTML+=`<tr><td><b>${escapeHTML(c.key)}</b></td><td><b>₹${c.val().discount}</b></td><td><button class="action-btn" onclick="deleteItem('promocodes','${c.key}')"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; }); } });
+            db.ref('global_offer').on('value', snap => { if(snap.exists() && document.getElementById('go-title')) { const data=snap.val(); document.getElementById('go-title').value=data.title||''; document.getElementById('go-code').value=data.code||''; document.getElementById('go-desc').value=data.desc||''; document.getElementById('go-active').checked=data.active||false;} });
+            db.ref('slider_button').on('value', snap => { if(snap.exists() && document.getElementById('sab-text')) { const data=snap.val(); document.getElementById('sab-text').value=data.text||''; document.getElementById('sab-link').value=data.link||''; document.getElementById('sab-active').checked=data.active||false; } });
+        }
+
+        function filterByDate() { const startStr = document.getElementById('filter-start').value; const endStr = document.getElementById('filter-end').value; const query = document.getElementById('order-search-input').value.toLowerCase(); let filtered = masterOrders; if (startStr || endStr) { const startDate = startStr ? new Date(startStr).getTime() : 0; const endDate = endStr ? new Date(endStr).setHours(23,59,59,999) : new Date().getTime(); filtered = filtered.filter(o => { let oDateStr = o.date || ""; let oDate; if(oDateStr.includes('/')) { const parts = oDateStr.split('/'); oDate = new Date(`${parts[1]}/${parts[0]}/${parts[2]}`).getTime(); } else { oDate = new Date(oDateStr).getTime(); } if(isNaN(oDate)) return true; return (oDate >= startDate && oDate <= endDate); }); } if(query) { filtered = filtered.filter(o => (String(o.userName||'').toLowerCase().includes(query)) || (String(o.utr||'').toLowerCase().includes(query))); } renderOrdersTable(filtered); }
+        function filterOrdersTable(query) { filterByDate(); }
+        function toggleAllCheckboxes(masterChk) { document.querySelectorAll('.order-chk').forEach(chk => { chk.checked = masterChk.checked; }); }
+        function applyBulkUpdate() { const status = document.getElementById('bulk-status').value; if(!status) return alert("Please select a status first!"); const selectedBoxes = document.querySelectorAll('.order-chk:checked'); if(selectedBoxes.length === 0) return alert("Select at least one order!"); if(confirm(`Update ${selectedBoxes.length} orders to ${status}?`)) { selectedBoxes.forEach(chk => { if(chk.id !== 'master-chk') { updateStatus(chk.value, chk.getAttribute('data-uid'), status); } }); alert("Bulk Update Successful!"); document.getElementById('bulk-status').value = ""; document.getElementById('master-chk').checked = false; } }
+        function toggleMaintenanceMode(isActive) { db.ref('app_settings/maintenance_mode').set(isActive); alert(isActive ? "Maintenance Mode ON. Users cannot access portal." : "Maintenance Mode OFF. Portal is live."); }
+        function addStaffAccess() { const uid = document.getElementById('new-staff-uid').value.trim(); if(uid.length < 10) return alert("Invalid UID!"); db.ref('app_settings/staff_users/'+uid).set(true).then(() => { alert("Staff Access Granted!"); document.getElementById('new-staff-uid').value=''; }); }
+        function removeStaffAccess(uid) { if(confirm("Remove this staff member?")) db.ref('app_settings/staff_users/'+uid).remove(); }
+        function updateStatus(key, uid, status){ db.ref('orders/'+key).update({status:status}).then(()=>sendNotification(uid, `Order Status Updated: ${status}`)); }
+        function approveWallet(key, uid, amount){ const currBal = allCustomersData[uid].walletBalance || 0; db.ref('customers/'+uid).update({walletBalance: currBal + amount}).then(()=>{ db.ref('wallet_requests/'+key).update({status:'Approved'}); sendNotification(uid, `₹${amount} added to your wallet!`); }); }
+        function openResultModal(key, uid){ currentOrderId=key; currentTicketUid=uid; currentResultUrl=""; document.getElementById('result-file').value=""; openModal('result-modal'); }
+        function saveResultDocument(){ const f=document.getElementById('result-file').files[0]; if(!f) return alert("Upload document!"); const fd=new FormData(); fd.append('image',f); fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`,{method:'POST',body:fd}).then(r=>r.json()).then(d=>{ db.ref('orders/'+currentOrderId).update({status: 'Delivered', resultUrl: d.data.url}).then(()=>{ sendNotification(currentTicketUid, `Your application is Completed! Result Document is ready to download.`); closeModal('result-modal'); alert("Sent!"); }); }); }
+        function openReplyModal(key, uid){ currentTicketId=key; currentTicketUid=uid; document.getElementById('reply-msg').value=''; openModal('reply-modal'); }
+        function saveReply(){ const msg=document.getElementById('reply-msg').value; if(msg){ db.ref('tickets/'+currentTicketId).update({reply:msg, status:'Closed'}); sendNotification(currentTicketUid, `Admin replied to your ticket.`); closeModal('reply-modal'); } }
+        function openEditUser(uid) { let u=allCustomersData[uid]; if(!u) return; editUserId=uid; document.getElementById('u-shop').value=u.shopName||''; document.getElementById('u-name').value=u.name||''; document.getElementById('u-role').value=u.role||'Retailer'; document.getElementById('u-status').value=u.accountStatus||'Pending'; openModal('user-modal'); }
+        function saveUser() { db.ref('customers/'+editUserId).update({shopName:document.getElementById('u-shop').value, name:document.getElementById('u-name').value, role:document.getElementById('u-role').value, accountStatus:document.getElementById('u-status').value}).then(()=>closeModal('user-modal')); }
+        function uploadTempFile(inp){ const f=inp.files[0]; const fd=new FormData(); fd.append('image',f); fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`,{method:'POST',body:fd}).then(r=>r.json()).then(d=>{tempImgUrl=d.data.url; alert("Uploaded! Click Save to apply.");}); }
+        function saveMarqueeAndOffer() { db.ref('app_settings/marquee').set({text: document.getElementById('marquee-input').value, active: document.getElementById('marquee-active').checked}); db.ref('global_offer').set({title: document.getElementById('go-title').value, code: document.getElementById('go-code').value.toUpperCase(), desc: document.getElementById('go-desc').value, active: document.getElementById('go-active').checked}); alert("Updated!"); }
+        function saveReferralSettings() { db.ref('app_settings/refer_earn').set({signupBonus: Number(document.getElementById('ref-bonus').value), formCommission: Number(document.getElementById('ref-comm').value)}).then(()=>alert("Pricing Updated!")); }
+        function saveInvoiceSettings() { db.ref('app_settings/invoice_details').set({name: document.getElementById('inv-c-name').value, address: document.getElementById('inv-c-address').value, email: document.getElementById('inv-c-email').value, phone: document.getElementById('inv-c-phone').value, gst: document.getElementById('inv-c-gst').value}).then(()=>alert("Invoice Details Saved")); }
+        
+        function saveLegalPolicies() { 
+            db.ref('app_settings/legal_policies').set({
+                terms: document.getElementById('lp-terms').value, 
+                privacy: document.getElementById('lp-privacy').value, 
+                refund: document.getElementById('lp-refund').value
+            }).then(()=>alert("Policies Saved")); 
+            // Also save to root for backward compatibility
+            db.ref('legal_policies').set({
+                terms: document.getElementById('lp-terms').value, 
+                privacy: document.getElementById('lp-privacy').value, 
+                refund: document.getElementById('lp-refund').value
+            });
+        }
+        
+        function saveSliderButton() { db.ref('slider_button').set({text: document.getElementById('sab-text').value, link: document.getElementById('sab-link').value, active: document.getElementById('sab-active').checked}); alert("Updated");}
+        function addCustomFieldUI() { const l=document.getElementById('new-field-label').value, t=document.getElementById('new-field-type').value, o=document.getElementById('new-field-opts').value; if(l){ currentCustomFields.push({label:l, type:t, options:o}); document.getElementById('new-field-label').value=''; document.getElementById('new-field-opts').value=''; renderCustomFields(); } }
+        function renderCustomFields() { const c=document.getElementById('custom-fields-container'); c.innerHTML=''; currentCustomFields.forEach((f,i)=>{ c.innerHTML+=`<div style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid #ccc; background:#fff; border-radius:6px; margin-bottom:5px;"><span>${escapeHTML(f.label)} [${escapeHTML(f.type)}]</span><i class="fa-solid fa-xmark" style="color:red; cursor:pointer;" onclick="currentCustomFields.splice(${i},1); renderCustomFields();"></i></div>`; }); }
+        
+        function openCategoryModal() { document.getElementById('c-name').value=''; document.getElementById('c-file').value=''; tempImgUrl=''; openModal('category-modal'); } 
+        function openBannerModal() { document.getElementById('b-title').value=''; document.getElementById('b-link').value=''; document.getElementById('b-file').value=''; tempImgUrl=''; openModal('banner-modal'); }
+        function openAIToolModal() { editAIToolId=null; tempImgUrl=""; document.getElementById('ai-img-file').value=''; document.getElementById('ai-name').value=''; document.getElementById('ai-link').value=''; document.getElementById('ai-embed').value=''; document.getElementById('ai-desc').value=''; document.getElementById('aitool-modal-title').innerText='Add AI Tool'; openModal('aitool-modal'); }
+        
+        function openProductModal(){ 
+            editProductId=null; 
+            currentCustomFields=[]; 
+            renderCustomFields(); 
+            tempImgUrl=""; 
+            document.getElementById('p-img-file').value=''; 
+            document.getElementById('p-name').value=''; 
+            document.getElementById('p-price-ret').value=''; 
+            document.getElementById('p-price-dist').value=''; 
+            document.getElementById('p-price-dm').value=''; 
+            document.getElementById('p-desc').value=''; 
+            document.getElementById('p-headline').value=''; 
+            
+            // Custom Buttons Reset
+            document.getElementById('p-yt-link').value='';
+            document.getElementById('p-btn1-text').value='Apply Now';
+            document.getElementById('p-btn1-type').value='form';
+            document.getElementById('p-btn1-link').value='';
+            document.getElementById('p-btn1-link').style.display='none';
+            document.getElementById('p-btn2-show').checked=false;
+            document.getElementById('p-btn2-text').value='Open Link';
+            document.getElementById('p-btn2-type').value='link';
+            document.getElementById('p-btn2-link').value='';
+            document.getElementById('p-btn2-link').style.display='block';
+            
+            openModal('product-modal'); 
+        }
+        
+        function openEditProduct(key) { 
+            let p=allAdminProducts[key]; 
+            editProductId=key; 
+            currentCustomFields=p.customForm||[]; 
+            renderCustomFields(); 
+            document.getElementById('p-name').value=p.title; 
+            document.getElementById('p-price-ret').value=p.priceRet||p.price; 
+            document.getElementById('p-price-dist').value=p.priceDist||p.price; 
+            document.getElementById('p-price-dm').value=p.priceDM||p.price; 
+            document.getElementById('p-desc').value=p.description||''; 
+            document.getElementById('p-headline').value = p.headline || ''; 
+            
+            // Load Buttons & YT Link
+            document.getElementById('p-yt-link').value = p.ytLink || '';
+            document.getElementById('p-btn1-text').value = p.btn1Text || 'Apply Now';
+            document.getElementById('p-btn1-type').value = p.btn1Type || 'form';
+            document.getElementById('p-btn1-link').value = p.btn1Link || '';
+            document.getElementById('p-btn1-link').style.display = (p.btn1Type==='link') ? 'block' : 'none';
+            
+            // Backward compatibility for older products which used 'serviceLink'
+            document.getElementById('p-btn2-show').checked = p.btn2Show !== undefined ? p.btn2Show : (p.serviceLink ? true : false);
+            document.getElementById('p-btn2-text').value = p.btn2Text || 'Open Link';
+            document.getElementById('p-btn2-type').value = p.btn2Type || 'link';
+            document.getElementById('p-btn2-link').value = p.btn2Link || p.serviceLink || '';
+            document.getElementById('p-btn2-link').style.display = (p.btn2Type==='link') ? 'block' : 'none';
+
+            tempImgUrl=p.imageUrl; 
+            openModal('product-modal'); 
+        }
+        
+        function saveProduct(){ 
+            const pData={
+                title:document.getElementById('p-name').value, 
+                priceRet:document.getElementById('p-price-ret').value, 
+                priceDist:document.getElementById('p-price-dist').value, 
+                priceDM:document.getElementById('p-price-dm').value, 
+                price:document.getElementById('p-price-ret').value, 
+                category:document.getElementById('p-cat').value, 
+                headline:document.getElementById('p-headline').value, 
+                description:document.getElementById('p-desc').value, 
+                imageUrl:tempImgUrl, 
+                customForm:currentCustomFields,
+                
+                // New Action Buttons Data
+                ytLink: document.getElementById('p-yt-link').value,
+                btn1Text: document.getElementById('p-btn1-text').value,
+                btn1Type: document.getElementById('p-btn1-type').value,
+                btn1Link: document.getElementById('p-btn1-link').value,
+                btn2Show: document.getElementById('p-btn2-show').checked,
+                btn2Text: document.getElementById('p-btn2-text').value,
+                btn2Type: document.getElementById('p-btn2-type').value,
+                btn2Link: document.getElementById('p-btn2-link').value,
+                serviceLink: document.getElementById('p-btn2-link').value // Maintain compatibility
+            }; 
+            
+            if(editProductId) db.ref('products/'+editProductId).update(pData).then(()=>closeModal('product-modal')); 
+            else db.ref('products').push(pData).then(()=>closeModal('product-modal')); 
+        }
+
+        function openEditAITool(key) { let t=allAITools[key]; editAIToolId=key; tempImgUrl=t.imageUrl||""; document.getElementById('ai-name').value=t.title||''; document.getElementById('ai-link').value=t.link||''; document.getElementById('ai-embed').value=t.embed||''; document.getElementById('ai-desc').value=t.description||''; document.getElementById('aitool-modal-title').innerText='Edit AI Tool'; openModal('aitool-modal'); }
+        function saveAITool() { const tData={title:document.getElementById('ai-name').value, link:document.getElementById('ai-link').value, embed:document.getElementById('ai-embed').value, description:document.getElementById('ai-desc').value, imageUrl:tempImgUrl}; if(editAIToolId) db.ref('ai_tools/'+editAIToolId).update(tData).then(()=>closeModal('aitool-modal')); else db.ref('ai_tools').push(tData).then(()=>closeModal('aitool-modal')); }
+
+        function saveCategory() { db.ref('categories').push({title:document.getElementById('c-name').value, imageUrl:tempImgUrl}).then(()=>closeModal('category-modal')); }
+        function openPromoModal() { document.getElementById('promo-code-val').value=''; document.getElementById('promo-discount-val').value=''; openModal('promo-modal'); } function savePromoCode() { db.ref('promocodes/'+document.getElementById('promo-code-val').value.toUpperCase()).set({discount: Number(document.getElementById('promo-discount-val').value)}).then(()=>closeModal('promo-modal')); }
+        function saveBanner() { db.ref('banners').push({title:document.getElementById('b-title').value, link:document.getElementById('b-link').value, imageUrl:tempImgUrl}).then(()=>closeModal('banner-modal')); }
+        function viewCustomImages(orderKey) { const o=masterOrders.find(x=>x.key===orderKey); const c=document.getElementById('custom-image-view-container'); c.innerHTML=''; o.uploadedDocs.forEach(url=>{ c.innerHTML+=`<a href="${escapeHTML(url)}" target="_blank"><img src="${escapeHTML(url)}" style="width:150px; height:150px; object-fit:contain; background:#f1f5f9; padding:5px; border-radius:8px;"></a>`; }); openModal('custom-image-modal'); }
+        function deleteItem(node, key) { if(confirm("Are you sure you want to delete this?")) db.ref(node + '/' + key).remove(); }
+        function renderSalesChart(dailySalesData) { try { if(typeof Chart==='undefined') return; const ctx=document.getElementById('salesChart').getContext('2d'); const labels=Object.keys(dailySalesData); const data=Object.values(dailySalesData); if(salesChartInstance){ salesChartInstance.destroy(); } salesChartInstance = new Chart(ctx, { type:'line', data:{labels:labels, datasets:[{label:'Revenue (₹)', data:data, borderColor:'#3b82f6', backgroundColor:'rgba(59,130,246,0.1)', fill:true}]}, options:{responsive:true, maintainAspectRatio:false} }); } catch(e){} }
+    </script>
+</body>
+</html>
