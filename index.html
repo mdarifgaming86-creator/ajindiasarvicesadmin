@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AJ INDIA SARVICES - Admin Portal</title>
-    <link rel="icon" type="image/png" href="https://via.placeholder.com/32?text=AJ" class="dynamic-admin-logo">
+    <link rel="icon" type="image/png" href="logo.png" class="dynamic-admin-logo">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
@@ -66,7 +66,7 @@
 
     <div id="login-screen" style="display:none;">
         <div class="login-box">
-            <img src="https://via.placeholder.com/150x80?text=AJ+LOGO" class="dynamic-admin-logo" style="width: auto; height: 80px; margin-bottom: 15px;" onerror="this.src='https://via.placeholder.com/150x80?text=AJ+LOGO'">
+            <img src="logo.png" class="dynamic-admin-logo" style="width: auto; height: 80px; margin-bottom: 15px;" onerror="this.src='logo.png'">
             <h2 style="margin-bottom: 20px; font-weight:900;">ADMIN PORTAL</h2>
             <input type="email" id="admin-email" placeholder="Admin/Staff Email" style="font-weight:bold;">
             <input type="password" id="admin-password" placeholder="•••••••••">
@@ -78,7 +78,7 @@
     <div id="admin-layout">
         <aside class="sidebar">
             <div style="padding:20px; text-align:center; border-bottom:1px solid #334155; position: sticky; top: 0; background: var(--sidebar-bg); z-index: 10;">
-                <img src="https://via.placeholder.com/150x80?text=AJ+LOGO" class="dynamic-admin-logo" style="width:auto; height: 60px; background:#fff; border-radius:8px; padding:5px; transition: 0.3s;" onerror="this.src='https://via.placeholder.com/150x80?text=AJ+LOGO'">
+                <img src="logo.png" class="dynamic-admin-logo" style="width:auto; height: 60px; background:#fff; border-radius:8px; padding:5px; transition: 0.3s;" onerror="this.src='logo.png'">
             </div>
             
             <div class="nav-item active" onclick="switchPage('orders', this)"><i class="fa-solid fa-file-contract"></i> Applications</div>
@@ -161,11 +161,11 @@
             <section id="dashboard" class="page" style="display:none;">
                 <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:15px; margin-bottom:20px;">
                     <div class="dashboard-box" style="margin-bottom:0;">
-                        <h3 style="color:var(--text-gray); font-size:0.9rem;">Today's Revenue</h3>
+                        <h3 style="color:var(--text-gray); font-size:0.9rem;">Today's Cash In</h3>
                         <h2 id="stat-today-revenue" style="color:var(--success); font-size:1.8rem; margin-top:5px;">₹0</h2>
                     </div>
                     <div class="dashboard-box" style="margin-bottom:0;">
-                        <h3 style="color:var(--text-gray); font-size:0.9rem;">Total Revenue</h3>
+                        <h3 style="color:var(--text-gray); font-size:0.9rem;">Total Cash In</h3>
                         <h2 id="stat-revenue" style="color:var(--primary); font-size:1.8rem; margin-top:5px;">₹0</h2>
                     </div>
                     <div class="dashboard-box" style="margin-bottom:0;">
@@ -177,12 +177,40 @@
                         <h2 id="stat-customers" style="color:var(--accent); font-size:1.8rem; margin-top:5px;">0</h2>
                     </div>
                 </div>
-                <div class="dashboard-box" style="height:350px; position:relative;"><canvas id="salesChart"></canvas></div>
+                <div class="dashboard-box" style="height:350px; position:relative;">
+                    <h3 style="margin-bottom:10px; color:var(--text-dark);">Last 7 Days Sales Analytics</h3>
+                    <canvas id="salesChart"></canvas>
+                </div>
             </section>
 
             <section id="customers" class="page" style="display:none;">
+                <div style="display:flex; gap:15px; margin-bottom:20px;">
+                    <div class="dashboard-box" style="flex:1; margin-bottom:0; text-align:center;">
+                        <h3 style="color:var(--text-gray); font-size:0.9rem;">Total Users</h3>
+                        <h2 id="ucount-total" style="color:var(--primary); font-size:1.8rem; margin-top:5px;">0</h2>
+                    </div>
+                    <div class="dashboard-box" style="flex:1; margin-bottom:0; text-align:center;">
+                        <h3 style="color:var(--text-gray); font-size:0.9rem;">Active Users</h3>
+                        <h2 id="ucount-active" style="color:var(--success); font-size:1.8rem; margin-top:5px;">0</h2>
+                    </div>
+                    <div class="dashboard-box" style="flex:1; margin-bottom:0; text-align:center;">
+                        <h3 style="color:var(--text-gray); font-size:0.9rem;">Pending Users</h3>
+                        <h2 id="ucount-pending" style="color:var(--danger); font-size:1.8rem; margin-top:5px;">0</h2>
+                    </div>
+                </div>
+
                 <div class="table-container">
-                    <h3>Registered Users Verification</h3>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:15px; align-items:center; flex-wrap:wrap; gap:10px;">
+                        <h3>Registered Users A2Z Verification</h3>
+                        <div style="display:flex; gap:10px;">
+                            <select id="filter-user-status" onchange="filterCustomers()" style="margin:0; padding:8px; border-radius:8px; width:auto; border:1px solid var(--border);">
+                                <option value="All">All Status</option>
+                                <option value="Active">Active</option>
+                                <option value="Pending">Pending</option>
+                            </select>
+                            <input type="text" id="search-user" placeholder="Search Name / Email / Shop..." oninput="filterCustomers()" style="margin:0; padding:8px; border-radius:8px; width:220px;">
+                        </div>
+                    </div>
                     <table><thead><tr><th>Name/Shop</th><th>Email & UTR Info</th><th>Role & Balance</th><th>Status</th><th>Action</th></tr></thead><tbody id="customers-table-body"></tbody></table>
                 </div>
             </section>
@@ -323,11 +351,11 @@
         </main>
     </div>
 
+    <!-- Modals -->
     <div id="headline-modal" class="modal-overlay">
         <div class="modal-content">
             <i class="fa-solid fa-xmark close-btn" onclick="closeModal('headline-modal')"></i>
             <h3 style="margin-bottom: 15px;"><i class="fa-solid fa-layer-group" style="color:var(--accent);"></i> Manage Services Headlines</h3>
-            
             <div style="background:#e0f2fe; padding:15px; border-radius:10px; border:1px solid #bae6fd; margin-bottom:15px;">
                 <h4 style="margin-bottom: 10px; color:#1e40af;">1. Main Page Static Headlines</h4>
                 <div style="display:flex; flex-direction:column; gap:10px;">
@@ -337,7 +365,6 @@
                     <button class="btn-primary" onclick="saveMainHeadlines()" style="width:auto; align-self:flex-start;">Update Main Headlines</button>
                 </div>
             </div>
-
             <div style="background:#f8fafc; padding:15px; border-radius:10px; border:1px dashed #cbd5e1; margin-bottom:15px;">
                 <h4 style="margin-bottom: 10px; color:#475569;">2. Add/Edit Custom Group Headlines</h4>
                 <label style="font-size:0.8rem; font-weight:bold;">Upload Icon/Image (Optional)</label>
@@ -349,7 +376,6 @@
                     <button class="btn-primary" id="cancel-headline-btn" onclick="resetHeadlineForm()" style="margin:0; width:auto; background:var(--text-gray); display:none;">Cancel</button>
                 </div>
             </div>
-
             <table style="margin-top:10px;">
                 <thead><tr><th>Icon</th><th>Custom Headline</th><th>Action</th></tr></thead>
                 <tbody id="headlines-table-body"></tbody>
@@ -361,14 +387,41 @@
     <div id="reply-modal" class="modal-overlay"><div class="modal-content"><i class="fa-solid fa-xmark close-btn" onclick="closeModal('reply-modal')"></i><h3>Reply Ticket</h3><textarea id="reply-msg" rows="3"></textarea><button class="btn-primary" onclick="saveReply()">Send Reply</button></div></div>
     <div id="custom-image-modal" class="modal-overlay" onclick="closeModal('custom-image-modal')"><div class="modal-content"><h3 style="margin-bottom: 15px;">Customer Documents</h3><div id="custom-image-view-container" style="display:flex; flex-wrap:wrap; gap:10px;"></div></div></div>
     
+    <!-- User A2Z Control Modal -->
     <div id="user-modal" class="modal-overlay">
         <div class="modal-content">
-            <i class="fa-solid fa-xmark close-btn" onclick="closeModal('user-modal')"></i><h3 id="user-modal-title">Edit User</h3>
-            <input type="text" id="u-shop" placeholder="Shop Name">
-            <input type="text" id="u-name" placeholder="Name">
-            <select id="u-role"><option value="Retailer">Retailer</option><option value="Distributor">Distributor</option><option value="AJ Officer">AJ Officer</option></select>
-            <select id="u-status"><option value="Pending">Pending</option><option value="Active">Active</option></select>
-            <button class="btn-primary" onclick="saveUser()" style="width:100%; background:var(--success);">Update User Details</button>
+            <i class="fa-solid fa-xmark close-btn" onclick="closeModal('user-modal')"></i>
+            <h3 id="user-modal-title" style="margin-bottom:20px; font-weight:900; color:var(--primary);"><i class="fa-solid fa-user-shield"></i> Manage User Profile</h3>
+            
+            <div style="display:flex; gap:10px; margin-bottom:15px;">
+                <div style="flex:1;"><label style="font-size:0.8rem; font-weight:bold;">Shop Name</label><input type="text" id="u-shop" placeholder="Shop Name" style="margin-bottom:0;"></div>
+                <div style="flex:1;"><label style="font-size:0.8rem; font-weight:bold;">Owner Name</label><input type="text" id="u-name" placeholder="Name" style="margin-bottom:0;"></div>
+            </div>
+            
+            <div style="display:flex; gap:10px; margin-bottom:15px;">
+                <div style="flex:1;">
+                    <label style="font-size:0.8rem; font-weight:bold;">User Role</label>
+                    <select id="u-role" style="margin-bottom:0;"><option value="Retailer">Retailer</option><option value="Distributor">Distributor</option><option value="AJ Officer">AJ Officer</option></select>
+                </div>
+                <div style="flex:1;">
+                    <label style="font-size:0.8rem; font-weight:bold;">Account Status</label>
+                    <select id="u-status" style="margin-bottom:0;"><option value="Pending">Pending</option><option value="Active">Active</option><option value="Suspended">Suspended</option></select>
+                </div>
+            </div>
+
+            <!-- Enhanced Wallet Section -->
+            <div style="background:#f0fdf4; padding:15px; border-radius:8px; border:1px solid #bbf7d0; margin-bottom:15px;">
+                <label style="font-size:0.9rem; font-weight:900; color:#166534; display:block; margin-bottom:5px;"><i class="fa-solid fa-wallet"></i> User Wallet Balance (₹)</label>
+                <div style="display:flex; gap:10px;">
+                    <input type="number" id="u-wallet" placeholder="Enter Amount" style="margin-bottom:0; font-weight:bold; font-size:1.1rem; color:var(--success);">
+                </div>
+                <small style="color:#15803d; font-weight:bold;">ম্যানুয়ালি ব্যালান্স আপডেট করতে চাইলে এখানে টাকার পরিমাণ লিখে Save করুন।</small>
+            </div>
+            
+            <!-- Password Reset Feature -->
+            <button class="btn-primary" onclick="sendPassResetAdmin()" style="width:100%; background:var(--text-gray); margin-bottom:10px;"><i class="fa-solid fa-key"></i> Send Password Reset Link to User</button>
+            
+            <button class="btn-primary" onclick="saveUser()" style="width:100%; background:var(--primary); font-size:1.1rem;"><i class="fa-solid fa-floppy-disk"></i> Update User Data</button>
         </div>
     </div>
     
@@ -379,12 +432,7 @@
             <input type="file" id="p-img-file" onchange="uploadTempFile(this)">
             <input type="text" id="p-name" placeholder="Service Name">
             <div style="display:flex; gap:10px;"><input type="number" id="p-price-ret" placeholder="Retailer Price (₹)"><input type="number" id="p-price-dist" placeholder="Distributor Price (₹)"><input type="number" id="p-price-dm" placeholder="AJ Officer Price (₹)"></div>
-            
-            <div style="display:flex; gap:10px;">
-                <select id="p-cat"><option value="">Select Category</option></select>
-                <select id="p-headline"><option value="">No Custom Headline</option></select>
-            </div>
-
+            <div style="display:flex; gap:10px;"><select id="p-cat"><option value="">Select Category</option></select><select id="p-headline"><option value="">No Custom Headline</option></select></div>
             <textarea id="p-desc" placeholder="Service Description" rows="2"></textarea>
             
             <div style="background:#f1f5f9; padding:15px; border-radius:8px; margin-bottom:10px; border:1px solid var(--border);">
@@ -394,19 +442,15 @@
                         <label style="font-size:0.8rem; font-weight:bold; color:var(--primary);">Button 1 (Primary)</label>
                         <input type="text" id="p-btn1-text" placeholder="Button Text (e.g. Apply Now)" value="Apply Now">
                         <select id="p-btn1-type" onchange="document.getElementById('p-btn1-link').style.display = this.value === 'link' ? 'block' : 'none'">
-                            <option value="form">Open Custom Form</option>
-                            <option value="link">Open URL Link</option>
+                            <option value="form">Open Custom Form</option><option value="link">Open URL Link</option>
                         </select>
                         <input type="url" id="p-btn1-link" placeholder="Button 1 URL" style="display:none;">
                     </div>
                     <div style="flex:1; min-width:200px;">
-                        <label style="font-size:0.8rem; font-weight:bold; color:var(--primary);">
-                            <input type="checkbox" id="p-btn2-show" style="width:auto; margin-right:5px; transform:scale(1.2);"> Show Button 2 (Secondary)
-                        </label>
-                        <input type="text" id="p-btn2-text" placeholder="Button Text (e.g. Open Link)" value="Open Link">
+                        <label style="font-size:0.8rem; font-weight:bold; color:var(--primary);"><input type="checkbox" id="p-btn2-show" style="width:auto; margin-right:5px; transform:scale(1.2);"> Show Button 2</label>
+                        <input type="text" id="p-btn2-text" placeholder="Button Text" value="Open Link">
                         <select id="p-btn2-type" onchange="document.getElementById('p-btn2-link').style.display = this.value === 'link' ? 'block' : 'none'">
-                            <option value="link">Open URL Link</option>
-                            <option value="form">Open Custom Form</option>
+                            <option value="link">Open URL Link</option><option value="form">Open Custom Form</option>
                         </select>
                         <input type="url" id="p-btn2-link" placeholder="Button 2 URL" style="display:block;">
                     </div>
@@ -453,7 +497,6 @@
     <script>
         const firebaseConfig = { apiKey: "AIzaSyAw_-3KzAyG_i8vBb43xqD6gHUsDKupmxk", authDomain: "aj-sarvices-a8554.firebaseapp.com", databaseURL: "https://aj-sarvices-a8554-default-rtdb.firebaseio.com", projectId: "aj-sarvices-a8554", storageBucket: "aj-sarvices-a8554.firebasestorage.app", messagingSenderId: "109804150730", appId: "1:109804150730:web:e75006f44ef5e120d43933" };
         
-        // UNIQUE APP INITIALIZATION FOR ADMIN PORTAL (ISOLATED SESSION)
         const adminApp = firebase.initializeApp(firebaseConfig, "ADMIN_PORTAL");
         const db = adminApp.database();
         const auth = adminApp.auth(); 
@@ -462,9 +505,10 @@
         const ADMIN_EMAIL = "ajsarvices@gmail.com"; 
         let isSuperAdmin = false;
         
-        let masterOrders=[], currentOrdersToDisplay=[], allCustomersData={}, allProductsData={}, currentCustomFields={}, allAITools={}, allAdminProducts={};
+        let masterOrders=[], currentOrdersToDisplay=[], allCustomersData={}, allCustomersArray=[], allProductsData={}, currentCustomFields={}, allAITools={}, allAdminProducts={};
+        let globalWallet = []; // Holds wallet requests for analytics
         let editProductId=null, editUserId=null, editAIToolId=null, tempImgUrl="";
-        let salesChartInstance = null; let appLogoUrl = "https://via.placeholder.com/150x80?text=AJ+LOGO"; let compCertUrl = "";
+        let salesChartInstance = null; let appLogoUrl = "logo.png"; let compCertUrl = "";
         let currentOrderId="", currentTicketId="", currentTicketUid="", currentResultUrl="";
         let globalChartData = {};
         let adminDataLoaded = false;
@@ -472,7 +516,6 @@
         let allHeadlinesData = {};
         let editHeadlineId = null;
         let tempHeadlineImgUrl = ""; 
-        
         let orderLimit = 100;
 
         function escapeHTML(str) {
@@ -481,6 +524,90 @@
                 const chars = { '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' };
                 return chars[tag] || tag;
             });
+        }
+
+        // DATE PARSERS FOR FLAWLESS 7-DAY ANALYTICS
+        function formatDateStandard(d) {
+            let day = ("0" + d.getDate()).slice(-2);
+            let month = ("0" + (d.getMonth() + 1)).slice(-2);
+            let year = d.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+        
+        function formatShortDate(d) {
+            let day = ("0" + d.getDate()).slice(-2);
+            let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+            let month = months[d.getMonth()];
+            return `${day} ${month}`;
+        }
+
+        function parseDBDate(dStr) {
+            if(!dStr) return new Date();
+            let d = new Date(dStr);
+            if(!isNaN(d.getTime())) return d;
+            let p = dStr.split('/');
+            if(p.length === 3) {
+                let fallback = new Date(`${p[1]}/${p[0]}/${p[2]}`);
+                if(!isNaN(fallback.getTime())) return fallback;
+            }
+            return new Date();
+        }
+
+        function updateAnalytics() {
+            if(isStaff) return;
+            
+            let rev = 0, todayRev = 0, pendingCount = 0;
+            const now = new Date();
+            const todayStr = formatDateStandard(now);
+            
+            // Build 7 day map
+            let chartDataMap = {};
+            for(let i=6; i>=0; i--) {
+                let d = new Date();
+                d.setDate(now.getDate() - i);
+                chartDataMap[formatShortDate(d)] = 0;
+            }
+
+            // Aggregate Orders (Exclude Wallet Payments to prevent double count)
+            masterOrders.forEach(o => {
+                if(o.status === 'Pending') pendingCount++;
+                
+                let isWalletPay = (o.utr === 'WALLET-PAY'); 
+                
+                if(o.status === 'Delivered' && !isWalletPay) {
+                    let amt = Number(o.price) || 0;
+                    rev += amt;
+                    
+                    let dObj = parseDBDate(o.timestamp || o.date);
+                    if(formatDateStandard(dObj) === todayStr) todayRev += amt;
+                    
+                    let shortD = formatShortDate(dObj);
+                    if(chartDataMap[shortD] !== undefined) chartDataMap[shortD] += amt;
+                }
+            });
+
+            // Aggregate Wallet Loads
+            globalWallet.forEach(w => {
+                if(w.status === 'Approved') {
+                    let amt = Number(w.amount) || 0;
+                    rev += amt;
+                    
+                    let dObj = parseDBDate(w.timestamp || w.date);
+                    if(formatDateStandard(dObj) === todayStr) todayRev += amt;
+                    
+                    let shortD = formatShortDate(dObj);
+                    if(chartDataMap[shortD] !== undefined) chartDataMap[shortD] += amt;
+                }
+            });
+
+            if(document.getElementById('stat-revenue')) document.getElementById('stat-revenue').innerText = "₹" + rev;
+            if(document.getElementById('stat-today-revenue')) document.getElementById('stat-today-revenue').innerText = "₹" + todayRev;
+            if(document.getElementById('stat-pending-orders')) document.getElementById('stat-pending-orders').innerText = pendingCount;
+            
+            globalChartData = chartDataMap;
+            if(document.getElementById('dashboard').classList.contains('active')) {
+                renderSalesChart(globalChartData);
+            }
         }
 
         function showGlobalLoader() { const loader = document.getElementById('global-loader'); if(loader) { loader.style.display = 'flex'; loader.style.opacity = '1'; } }
@@ -528,16 +655,13 @@
             auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
                 return auth.signInWithEmailAndPassword(em, ps);
             }).then(() => {
-                localStorage.setItem('ajAdminLogged', 'true'); // Only set Admin Session
+                localStorage.setItem('ajAdminLogged', 'true');
             }).catch((error) => { 
                 hideGlobalLoader(); err.innerHTML = "<b>Login Failed!</b><br>Wrong credentials or account not found."; err.style.display = 'block'; btn.innerHTML = `Login Securely`; 
             });
         }
 
-        function logoutAdmin(){ 
-            localStorage.removeItem('ajAdminLogged'); // Clear Admin Session only
-            auth.signOut().then(() => { location.reload(); }); 
-        }
+        function logoutAdmin(){ localStorage.removeItem('ajAdminLogged'); auth.signOut().then(() => { location.reload(); }); }
         function switchPage(id, el) { document.querySelectorAll('.page').forEach(p=>p.style.display='none'); document.getElementById(id).style.display='block'; document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active')); el.classList.add('active'); document.getElementById('page-title').innerText=el.innerText.trim(); if(id === 'dashboard') { setTimeout(() => renderSalesChart(globalChartData), 200); } }
         function openModal(id){ document.getElementById(id).style.display='flex'; } function closeModal(id){ document.getElementById(id).style.display='none'; }
         function exportToCSV() { let csvContent = "data:text/csv;charset=utf-8,ID,Date,User,Service,Price,Status\n"; currentOrdersToDisplay.forEach(o => { csvContent += `${o.key},${o.date},${escapeHTML(o.userName)},${escapeHTML(o.title)},${o.price},${o.status}\n`; }); const encodedUri = encodeURI(csvContent); const link = document.createElement("a"); link.setAttribute("href", encodedUri); link.setAttribute("download", "AJ_Applications.csv"); document.body.appendChild(link); link.click(); }
@@ -546,18 +670,21 @@
 
         function renderOrdersTable(ordersData) {
             currentOrdersToDisplay = ordersData; const b = document.getElementById('orders-table-body'); b.innerHTML = '';
-            
             ordersData.forEach(o => {
                 let statSel=`<select onchange="updateStatus('${o.key}', '${o.userId}', this.value)" style="padding:4px; margin-top:5px; border-radius:4px;"><option value="Pending" ${o.status==='Pending'?'selected':''}>Pending</option><option value="Processing" ${o.status==='Processing'?'selected':''}>Processing</option><option value="Delivered" ${o.status==='Delivered'?'selected':''}>Completed</option><option value="Cancelled" ${o.status==='Cancelled'?'selected':''}>Cancelled</option></select>`;
                 let resBtn = o.resultUrl ? `<a href="${escapeHTML(o.resultUrl)}" target="_blank" style="color:var(--success); font-size:0.8rem; font-weight:bold;">View Sent</a>` : `<button onclick="openResultModal('${o.key}', '${o.userId}')" style="padding:6px; font-size:0.75rem; background:var(--primary); color:#fff; border:none; border-radius:4px; margin-top:5px;">Upload Result</button>`;
-                let extraInfo = o.extraDetails ? `<div style="background:#f1f5f9; padding:6px; font-size:0.8rem; margin-top:6px; border-radius:6px; color:#334155;">${escapeHTML(o.extraDetails)}</div>` : '';
+                
+                // REMOVED escapeHTML from o.extraDetails HERE so HTML renders properly
+                let extraInfo = o.extraDetails ? `<div style="background:#f1f5f9; padding:6px; font-size:0.8rem; margin-top:6px; border-radius:6px; color:#334155; line-height:1.4;">${o.extraDetails}</div>` : '';
+                
                 let docs = o.uploadedDocs ? `<button onclick="viewCustomImages('${o.key}')" class="action-btn" style="font-size:0.8rem; margin-top:5px;"><i class="fa-solid fa-file"></i> Docs (${o.uploadedDocs.length})</button>` : '';
+                let oImg = o.img || appLogoUrl;
                 b.innerHTML+=`<tr><td><input type="checkbox" class="order-chk" value="${o.key}" data-uid="${o.userId}"></td><td>${o.key.slice(-5)}<br><small>${escapeHTML(o.date)}</small></td><td><b>${escapeHTML(o.userName)}</b><br><small>${escapeHTML(o.userEmail||'')}</small></td><td><b>${escapeHTML(o.title)}</b>${extraInfo}${docs}</td><td><b style="color:var(--primary);">₹${o.price}</b><br><code class="copy-utr" onclick="copyText('${escapeHTML(o.utr)}')">${escapeHTML(o.utr)}</code></td><td><span class="status-badge ${o.status}">${escapeHTML(o.status)}</span><br>${statSel}<br>${resBtn}</td><td><button class="action-btn" onclick="deleteItem('orders','${o.key}')"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`;
             });
             document.getElementById('master-chk').checked = false;
         }
 
-        function loadMoreOrders() { orderLimit += 100; loadAdminData(false); } // Refresh data with new limit
+        function loadMoreOrders() { orderLimit += 100; loadAdminData(false); } 
 
         db.ref('service_headlines').on('value', s => {
             allHeadlinesData = {}; const b = document.getElementById('headlines-table-body'); const sel = document.getElementById('p-headline');
@@ -565,7 +692,7 @@
             if(s.exists()) {
                 s.forEach(c => {
                     const h = c.val(); allHeadlinesData[c.key] = h;
-                    let imgDisplay = h.imageUrl ? `<img src="${h.imageUrl}" width="30" style="border-radius:4px;">` : `<i class="fa-solid fa-layer-group"></i>`;
+                    let imgDisplay = h.imageUrl ? `<img src="${h.imageUrl}" onerror="this.src=appLogoUrl" width="30" style="border-radius:4px;">` : `<img src="${appLogoUrl}" width="30" style="border-radius:4px;">`;
                     if(b) b.innerHTML += `<tr><td>${imgDisplay}</td><td><b>${escapeHTML(h.title)}</b></td><td><button class="action-btn" onclick="editHeadline('${c.key}')"><i class="fa-solid fa-pen"></i></button><button class="action-btn" onclick="deleteItem('service_headlines','${c.key}')"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`;
                     if(sel) sel.innerHTML += `<option value="${escapeHTML(h.title)}">${escapeHTML(h.title)}</option>`;
                 });
@@ -581,26 +708,17 @@
         }
 
         function uploadFile(inp, path, statusId){ 
-            const f=inp.files[0]; 
-            if(!f) return;
+            const f=inp.files[0]; if(!f) return;
             const statusEl = document.getElementById(statusId);
             const origText = statusEl.innerText;
-            statusEl.innerText = " Uploading... Please wait.";
-            statusEl.style.color = "var(--accent)";
-            const fd=new FormData(); 
-            fd.append('image',f); 
-            fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`,{method:'POST',body:fd})
-            .then(r=>r.json())
-            .then(d=>{ 
+            statusEl.innerText = " Uploading... Please wait."; statusEl.style.color = "var(--accent)";
+            const fd=new FormData(); fd.append('image',f); 
+            fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`,{method:'POST',body:fd}).then(r=>r.json()).then(d=>{ 
                 db.ref(path).set(d.data.url).then(() => {
-                    statusEl.innerText = " Saved to Server!";
-                    statusEl.style.color = "var(--success)";
+                    statusEl.innerText = " Saved to Server!"; statusEl.style.color = "var(--success)";
                     setTimeout(()=>{ statusEl.innerText = origText; statusEl.style.color = ""; }, 3000);
                 }); 
-            }).catch(e => {
-                statusEl.innerText = " Upload Failed!";
-                statusEl.style.color = "red";
-            }); 
+            }).catch(e => { statusEl.innerText = " Upload Failed!"; statusEl.style.color = "red"; }); 
         }
 
         function uploadHeadlineFile(inp) {
@@ -619,12 +737,8 @@
             if(!t) return alert("Enter headline title");
             const btn = document.getElementById('save-headline-btn'); btn.innerText = "Saving...";
             const data = { title: t, imageUrl: tempHeadlineImgUrl };
-            
-            if(editHeadlineId) {
-                db.ref('service_headlines/'+editHeadlineId).update(data).then(()=>{ resetHeadlineForm(); alert("Headline Updated!"); });
-            } else {
-                db.ref('service_headlines').push(data).then(()=>{ resetHeadlineForm(); alert("Headline Added!"); });
-            }
+            if(editHeadlineId) { db.ref('service_headlines/'+editHeadlineId).update(data).then(()=>{ resetHeadlineForm(); alert("Headline Updated!"); }); } 
+            else { db.ref('service_headlines').push(data).then(()=>{ resetHeadlineForm(); alert("Headline Added!"); }); }
         }
 
         function resetHeadlineForm() {
@@ -640,59 +754,66 @@
             document.getElementById('save-headline-btn').innerText = 'Update'; document.getElementById('cancel-headline-btn').style.display = 'inline-block';
         }
 
-        // Live preview of admin logo size change
-        function updateAdminLogoPreview(size) {
-            document.querySelectorAll('.dynamic-admin-logo').forEach(img => {
-                img.style.height = size + 'px';
-                img.style.width = 'auto'; // maintain aspect ratio
-            });
-        }
-
-        // Save logo size to database
-        function saveLogoSize() {
-            const size = document.getElementById('logo-size-slider').value;
-            db.ref('app_settings/logo_size').set(size).then(() => {
-                alert("Logo Size Saved successfully!");
-            });
-        }
+        function updateAdminLogoPreview(size) { document.querySelectorAll('.dynamic-admin-logo').forEach(img => { img.style.height = size + 'px'; img.style.width = 'auto'; }); }
+        function saveLogoSize() { const size = document.getElementById('logo-size-slider').value; db.ref('app_settings/logo_size').set(size).then(() => { alert("Logo Size Saved successfully!"); }); }
 
         function loadAdminData(isStaff) {
+            // LOAD ORDERS
             db.ref('orders').limitToLast(orderLimit).on('value', s=>{
-                masterOrders=[]; let rev=0, pendingCount=0, todayRev=0;
-                const todayStr = new Date().toLocaleDateString('en-GB');
+                masterOrders=[]; 
                 if(s.exists()){ s.forEach(c=>{ 
                     const o=c.val(); o.key=c.key; masterOrders.push(o); 
-                    if(o.status==='Delivered') rev+=Number(o.price)||0; 
-                    if(o.status==='Pending') pendingCount++;
-                    let orderDateObj = new Date(o.timestamp || o.date); if(isNaN(orderDateObj.getTime())) orderDateObj = new Date();
-                    const formattedOrderDay = orderDateObj.toLocaleDateString('en-GB');
-                    if(o.status==='Delivered' && formattedOrderDay === todayStr) { todayRev += Number(o.price)||0; }
                 }); } 
                 masterOrders.reverse();
-                if(!isStaff && document.getElementById('stat-revenue')) {
-                    document.getElementById('stat-revenue').innerText="₹"+rev; document.getElementById('stat-today-revenue').innerText="₹"+todayRev; document.getElementById('stat-pending-orders').innerText=pendingCount; document.getElementById('stat-orders').innerText=masterOrders.length;
-                    const last7Days = [...Array(7)].map((_, i) => { const d = new Date(); d.setDate(d.getDate() - i); return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }); }).reverse();
-                    let chartDataMap = {}; last7Days.forEach(day => chartDataMap[day] = 0);
-                    masterOrders.forEach(o=>{ let orderDateObj = new Date(o.timestamp || o.date); if(isNaN(orderDateObj.getTime())) orderDateObj = new Date(); const formattedOrderDay = orderDateObj.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }); if(chartDataMap[formattedOrderDay] !== undefined) { chartDataMap[formattedOrderDay] += (Number(o.price)||0); } });
-                    globalChartData = chartDataMap; if(document.getElementById('dashboard').classList.contains('active')) { renderSalesChart(globalChartData); }
-                }
-                
-                if(masterOrders.length >= orderLimit) {
-                    document.getElementById('load-more-orders-btn').style.display = 'block';
-                } else {
-                    document.getElementById('load-more-orders-btn').style.display = 'none';
-                }
-
                 if(document.getElementById('filter-start').value || document.getElementById('order-search-input').value) { filterByDate(); } else { renderOrdersTable(masterOrders); }
+                
+                if(!isStaff) { updateAnalytics(); }
+            });
+
+            // LOAD WALLET REQUESTS
+            db.ref('wallet_requests').on('value', s=>{ 
+                globalWallet = [];
+                const b=document.getElementById('wallet-table-body'); if(b) b.innerHTML=''; 
+                if(s.exists()){
+                    s.forEach(c=>{ 
+                        const w=c.val(); 
+                        w.key = c.key;
+                        globalWallet.push(w);
+                        if(w.status==='Pending' && b){ 
+                            b.innerHTML+=`<tr><td>${escapeHTML(w.name)}</td><td><b style="color:var(--success);">₹${w.amount}</b></td><td><code class="copy-utr" onclick="copyText('${escapeHTML(w.utr)}')">${escapeHTML(w.utr)}</code></td><td><button onclick="approveWallet('${c.key}','${w.uid}',${w.amount})" style="background:var(--success); color:#fff; border:none; padding:5px; border-radius:5px; margin-right:5px; cursor:pointer;">Approve</button><button onclick="db.ref('wallet_requests/${c.key}').update({status:'Rejected'})" style="background:red; color:#fff; border:none; padding:5px; border-radius:5px; cursor:pointer;">Reject</button></td></tr>`; 
+                        } 
+                    }); 
+                }
+                if(!isStaff) { updateAnalytics(); }
             });
 
             if(!isStaff) {
                 db.ref('customers').on('value', s => {
-                    const b = document.getElementById('customers-table-body'); if(!b) return; b.innerHTML = ''; let cc = 0; allCustomersData = {};
-                    if(s.exists()){ s.forEach(c => { const u = c.val(); if(!u) return; allCustomersData[c.key] = u; cc++; let shop = u.shopName || 'N/A'; let name = u.name || 'N/A'; let email = u.email || 'N/A'; let utr = u.registrationUtr || 'N/A'; let role = u.role || 'User'; let bal = u.walletBalance || 0; let status = u.accountStatus || 'Pending'; let actBtn = status === "Pending" ? `<button class="action-btn" onclick="db.ref('customers/${c.key}').update({accountStatus:'Active'})" title="Approve Customer"><i class="fa-solid fa-check" style="color:green;"></i></button>` : ''; b.innerHTML += `<tr><td><b>${escapeHTML(shop)}</b><br><small>${escapeHTML(name)}</small><br><small style="color:#cbd5e1;">UID: ${c.key}</small></td><td>${escapeHTML(email)}<br><code>UTR: ${escapeHTML(utr)}</code></td><td>${escapeHTML(role)}<br>Bal: ₹${bal}</td><td><span style="font-weight:bold; color:${status==='Active'?'green':'red'}">${escapeHTML(status)}</span></td><td>${actBtn}<button class="action-btn" onclick="openEditUser('${c.key}')"><i class="fa-solid fa-pen"></i></button><button class="action-btn" onclick="deleteItem('customers', '${c.key}')"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; }); } else { b.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px;">No Users Found in Database</td></tr>`; }
-                    if(document.getElementById('stat-customers')) document.getElementById('stat-customers').innerText = cc;
+                    allCustomersData = {};
+                    allCustomersArray = [];
+                    let totalU = 0, activeU = 0, pendingU = 0;
+
+                    if(s.exists()){ 
+                        s.forEach(c => { 
+                            const u = c.val(); if(!u) return; 
+                            u.key = c.key;
+                            allCustomersData[c.key] = u; 
+                            allCustomersArray.push(u);
+                            
+                            totalU++;
+                            if(u.accountStatus === 'Active') activeU++;
+                            else pendingU++;
+                        }); 
+                    } 
+                    
+                    if(document.getElementById('stat-customers')) document.getElementById('stat-customers').innerText = totalU;
+                    if(document.getElementById('ucount-total')) document.getElementById('ucount-total').innerText = totalU;
+                    if(document.getElementById('ucount-active')) document.getElementById('ucount-active').innerText = activeU;
+                    if(document.getElementById('ucount-pending')) document.getElementById('ucount-pending').innerText = pendingU;
+                    
+                    filterCustomers(); 
                 });
-                db.ref('wallet_requests').on('value', s=>{ const b=document.getElementById('wallet-table-body'); b.innerHTML=''; s.forEach(c=>{ const w=c.val(); if(w.status==='Pending'){ b.innerHTML+=`<tr><td>${escapeHTML(w.name)}</td><td>₹${w.amount}</td><td>${escapeHTML(w.utr)}</td><td><button onclick="approveWallet('${c.key}','${w.uid}',${w.amount})" style="background:var(--success); color:#fff; border:none; padding:5px; border-radius:5px;">Approve</button></td><td><button onclick="db.ref('wallet_requests/${c.key}').update({status:'Rejected'})" style="background:red; color:#fff; border:none; padding:5px; border-radius:5px;">Reject</button></td></tr>`; } }); });
+
                 db.ref('app_settings').on('value', snap => { 
                     if(snap.exists()) { 
                         let data = snap.val(); if(data.maintenance_mode !== undefined) document.getElementById('maintenance-active').checked = data.maintenance_mode;
@@ -716,10 +837,7 @@
                         }
 
                         if(data.logo_size) {
-                            if(document.getElementById('logo-size-slider')) {
-                                document.getElementById('logo-size-slider').value = data.logo_size;
-                                document.getElementById('logo-size-val').innerText = data.logo_size + 'px';
-                            }
+                            if(document.getElementById('logo-size-slider')) { document.getElementById('logo-size-slider').value = data.logo_size; document.getElementById('logo-size-val').innerText = data.logo_size + 'px'; }
                             updateAdminLogoPreview(data.logo_size);
                         }
                         
@@ -734,13 +852,86 @@
                 });
             }
             db.ref('tickets').on('value', s=>{ const b=document.getElementById('tickets-table-body'); b.innerHTML=''; s.forEach(c=>{ const t=c.val(); b.innerHTML+=`<tr><td>${escapeHTML(t.shop)}</td><td>${escapeHTML(t.msg)}</td><td>${escapeHTML(t.reply||'No Reply')}</td><td><button onclick="openReplyModal('${c.key}', '${t.uid}')" style="background:var(--primary); color:#fff; border:none; padding:5px; border-radius:5px;">Reply</button></td></tr>`; }); });
-            db.ref('products').on('value', s=>{ const b=document.getElementById('products-table-body'); b.innerHTML=''; allAdminProducts={}; s.forEach(c=>{ const p=c.val()||{}; allAdminProducts[c.key]=p; b.innerHTML+=`<tr><td><img src="${p.imageUrl}" width="50" style="border-radius:8px;"></td><td><b>${escapeHTML(p.title)}</b><br><small>${escapeHTML(p.category)}</small></td><td>₹${p.priceRet} / ₹${p.priceDist} / ₹${p.priceDM}</td><td><button class="action-btn" onclick="openEditProduct('${c.key}')"><i class="fa-solid fa-pen"></i></button><button class="action-btn" onclick="db.ref('products/${c.key}').remove()"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; }); });
-            db.ref('ai_tools').on('value', s=>{ const b=document.getElementById('aitools-table-body'); b.innerHTML=''; allAITools={}; if(s.exists()){ s.forEach(c=>{ const t=c.val()||{}; allAITools[c.key]=t; let linkText = t.embed ? `<span style="color:var(--success); font-weight:bold;">HTML Embedded</span>` : (t.link ? `<a href="${escapeHTML(t.link)}" target="_blank" style="color:var(--primary); font-weight:bold;">View Link</a>` : 'No Link'); b.innerHTML+=`<tr><td><img src="${t.imageUrl}" onerror="this.src='logo.png'" width="45" style="border-radius:8px; border:1px solid var(--border-color);"></td><td><b>${escapeHTML(t.title)}</b><br><small>${escapeHTML(t.description)}</small></td><td>${linkText}</td><td><button class="action-btn" onclick="openEditAITool('${c.key}')"><i class="fa-solid fa-pen"></i></button><button class="action-btn" onclick="deleteItem('ai_tools','${c.key}')"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; }); } });
-            db.ref('categories').on('value', s=>{ const b=document.getElementById('categories-table-body'); b.innerHTML=''; const sel=document.getElementById('p-cat'); if(sel) sel.innerHTML='<option value="">Select Category</option>'; s.forEach(c=>{ const cat=c.val(); b.innerHTML+=`<tr><td><img src="${cat.imageUrl}" width="40"></td><td>${escapeHTML(cat.title)}</td><td><button class="action-btn" onclick="db.ref('categories/${c.key}').remove()"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; if(sel) sel.innerHTML+=`<option value="${escapeHTML(cat.title)}">${escapeHTML(cat.title)}</option>`; }); });
-            db.ref('banners').on('value', s=>{ const b=document.getElementById('banners-table-body'); b.innerHTML=''; s.forEach(c=>{ b.innerHTML+=`<tr><td><img src="${c.val().imageUrl}" width="100"></td><td>${escapeHTML(c.val().title)}</td><td><button class="action-btn" onclick="db.ref('banners/${c.key}').remove()"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; }); });
+            
+            // -------------------------------------------------------------
+            // DYNAMIC FALLBACK LOGO IMPLEMENTATION (REPLACES 'logo.png')
+            // -------------------------------------------------------------
+
+            db.ref('products').on('value', s=>{ 
+                const b=document.getElementById('products-table-body'); b.innerHTML=''; allAdminProducts={}; 
+                s.forEach(c=>{ 
+                    const p=c.val()||{}; allAdminProducts[c.key]=p; 
+                    let pImg = p.imageUrl || appLogoUrl; 
+                    b.innerHTML+=`<tr><td><img src="${pImg}" onerror="this.src=appLogoUrl" width="50" style="border-radius:8px;"></td><td><b>${escapeHTML(p.title)}</b><br><small>${escapeHTML(p.category)}</small></td><td>₹${p.priceRet} / ₹${p.priceDist} / ₹${p.priceDM}</td><td><button class="action-btn" onclick="openEditProduct('${c.key}')"><i class="fa-solid fa-pen"></i></button><button class="action-btn" onclick="db.ref('products/${c.key}').remove()"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; 
+                }); 
+            });
+            
+            db.ref('ai_tools').on('value', s=>{ 
+                const b=document.getElementById('aitools-table-body'); b.innerHTML=''; allAITools={}; 
+                if(s.exists()){ 
+                    s.forEach(c=>{ 
+                        const t=c.val()||{}; allAITools[c.key]=t; 
+                        let linkText = t.embed ? `<span style="color:var(--success); font-weight:bold;">HTML Embedded</span>` : (t.link ? `<a href="${escapeHTML(t.link)}" target="_blank" style="color:var(--primary); font-weight:bold;">View Link</a>` : 'No Link'); 
+                        let aiImg = t.imageUrl || appLogoUrl; 
+                        b.innerHTML+=`<tr><td><img src="${aiImg}" onerror="this.src=appLogoUrl" width="45" style="border-radius:8px; border:1px solid var(--border-color);"></td><td><b>${escapeHTML(t.title)}</b><br><small>${escapeHTML(t.description)}</small></td><td>${linkText}</td><td><button class="action-btn" onclick="openEditAITool('${c.key}')"><i class="fa-solid fa-pen"></i></button><button class="action-btn" onclick="deleteItem('ai_tools','${c.key}')"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; 
+                    }); 
+                } 
+            });
+            
+            db.ref('categories').on('value', s=>{ 
+                const b=document.getElementById('categories-table-body'); b.innerHTML=''; const sel=document.getElementById('p-cat'); if(sel) sel.innerHTML='<option value="">Select Category</option>'; 
+                s.forEach(c=>{ 
+                    const cat=c.val(); 
+                    let catImg = cat.imageUrl || appLogoUrl; 
+                    b.innerHTML+=`<tr><td><img src="${catImg}" onerror="this.src=appLogoUrl" width="40"></td><td>${escapeHTML(cat.title)}</td><td><button class="action-btn" onclick="db.ref('categories/${c.key}').remove()"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; 
+                    if(sel) sel.innerHTML+=`<option value="${escapeHTML(cat.title)}">${escapeHTML(cat.title)}</option>`; 
+                }); 
+            });
+            
+            db.ref('banners').on('value', s=>{ 
+                const b=document.getElementById('banners-table-body'); b.innerHTML=''; 
+                s.forEach(c=>{ 
+                    let banImg = c.val().imageUrl || appLogoUrl; 
+                    b.innerHTML+=`<tr><td><img src="${banImg}" onerror="this.src=appLogoUrl" width="100"></td><td>${escapeHTML(c.val().title)}</td><td><button class="action-btn" onclick="db.ref('banners/${c.key}').remove()"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; 
+                }); 
+            });
+            
             db.ref('promocodes').on('value', s => { const b=document.getElementById('promocodes-table-body'); if(b){ b.innerHTML=''; s.forEach(c => { b.innerHTML+=`<tr><td><b>${escapeHTML(c.key)}</b></td><td><b>₹${c.val().discount}</b></td><td><button class="action-btn" onclick="deleteItem('promocodes','${c.key}')"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; }); } });
             db.ref('global_offer').on('value', snap => { if(snap.exists() && document.getElementById('go-title')) { const data=snap.val(); document.getElementById('go-title').value=data.title||''; document.getElementById('go-code').value=data.code||''; document.getElementById('go-desc').value=data.desc||''; document.getElementById('go-active').checked=data.active||false;} });
             db.ref('slider_button').on('value', snap => { if(snap.exists() && document.getElementById('sab-text')) { const data=snap.val(); document.getElementById('sab-text').value=data.text||''; document.getElementById('sab-link').value=data.link||''; document.getElementById('sab-active').checked=data.active||false; } });
+        }
+
+        function filterCustomers() {
+            const statusFilter = document.getElementById('filter-user-status').value;
+            const searchQ = document.getElementById('search-user').value.toLowerCase();
+            const b = document.getElementById('customers-table-body');
+            b.innerHTML = '';
+            
+            let filtered = allCustomersArray;
+            
+            if(statusFilter !== 'All') {
+                filtered = filtered.filter(u => u.accountStatus === statusFilter || (statusFilter==='Pending' && u.accountStatus!=='Active'));
+            }
+            if(searchQ) {
+                filtered = filtered.filter(u => (u.name||'').toLowerCase().includes(searchQ) || (u.email||'').toLowerCase().includes(searchQ) || (u.shopName||'').toLowerCase().includes(searchQ));
+            }
+            
+            if(filtered.length === 0) {
+                b.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px;">No Users Found</td></tr>`;
+                return;
+            }
+            
+            filtered.forEach(u => {
+                let shop = u.shopName || 'N/A'; let name = u.name || 'N/A'; let email = u.email || 'N/A'; let utr = u.registrationUtr || 'N/A'; let role = u.role || 'User'; let bal = u.walletBalance || 0; let status = u.accountStatus || 'Pending'; 
+                let actBtn = status === "Pending" ? `<button class="action-btn" onclick="db.ref('customers/${u.key}').update({accountStatus:'Active'})" title="Approve Customer"><i class="fa-solid fa-check" style="color:green;"></i></button>` : ''; 
+                b.innerHTML += `<tr>
+                    <td><b>${escapeHTML(shop)}</b><br><small>${escapeHTML(name)}</small><br><small style="color:#cbd5e1;">UID: ${u.key}</small></td>
+                    <td>${escapeHTML(email)}<br><code>UTR: ${escapeHTML(utr)}</code></td>
+                    <td>${escapeHTML(role)}<br><b style="color:var(--success);">Bal: ₹${bal}</b></td>
+                    <td><span style="font-weight:bold; color:${status==='Active'?'green':(status==='Suspended'?'red':'#f59e0b')}">${escapeHTML(status)}</span></td>
+                    <td>${actBtn}<button class="action-btn" onclick="openEditUser('${u.key}')" title="Manage User"><i class="fa-solid fa-user-pen" style="color:var(--primary);"></i></button><button class="action-btn" onclick="deleteItem('customers', '${u.key}')"><i class="fa-solid fa-trash" style="color:red;"></i></button></td>
+                </tr>`;
+            });
         }
 
         function filterByDate() { const startStr = document.getElementById('filter-start').value; const endStr = document.getElementById('filter-end').value; const query = document.getElementById('order-search-input').value.toLowerCase(); let filtered = masterOrders; if (startStr || endStr) { const startDate = startStr ? new Date(startStr).getTime() : 0; const endDate = endStr ? new Date(endStr).setHours(23,59,59,999) : new Date().getTime(); filtered = filtered.filter(o => { let oDateStr = o.date || ""; let oDate; if(oDateStr.includes('/')) { const parts = oDateStr.split('/'); oDate = new Date(`${parts[1]}/${parts[0]}/${parts[2]}`).getTime(); } else { oDate = new Date(oDateStr).getTime(); } if(isNaN(oDate)) return true; return (oDate >= startDate && oDate <= endDate); }); } if(query) { filtered = filtered.filter(o => (String(o.userName||'').toLowerCase().includes(query)) || (String(o.utr||'').toLowerCase().includes(query))); } renderOrdersTable(filtered); }
@@ -756,25 +947,39 @@
         function saveResultDocument(){ const f=document.getElementById('result-file').files[0]; if(!f) return alert("Upload document!"); const fd=new FormData(); fd.append('image',f); fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`,{method:'POST',body:fd}).then(r=>r.json()).then(d=>{ db.ref('orders/'+currentOrderId).update({status: 'Delivered', resultUrl: d.data.url}).then(()=>{ sendNotification(currentTicketUid, `Your application is Completed! Result Document is ready to download.`); closeModal('result-modal'); alert("Sent!"); }); }); }
         function openReplyModal(key, uid){ currentTicketId=key; currentTicketUid=uid; document.getElementById('reply-msg').value=''; openModal('reply-modal'); }
         function saveReply(){ const msg=document.getElementById('reply-msg').value; if(msg){ db.ref('tickets/'+currentTicketId).update({reply:msg, status:'Closed'}); sendNotification(currentTicketUid, `Admin replied to your ticket.`); closeModal('reply-modal'); } }
-        function openEditUser(uid) { let u=allCustomersData[uid]; if(!u) return; editUserId=uid; document.getElementById('u-shop').value=u.shopName||''; document.getElementById('u-name').value=u.name||''; document.getElementById('u-role').value=u.role||'Retailer'; document.getElementById('u-status').value=u.accountStatus||'Pending'; openModal('user-modal'); }
-        function saveUser() { db.ref('customers/'+editUserId).update({shopName:document.getElementById('u-shop').value, name:document.getElementById('u-name').value, role:document.getElementById('u-role').value, accountStatus:document.getElementById('u-status').value}).then(()=>closeModal('user-modal')); }
+        
+        function openEditUser(uid) { 
+            let u = allCustomersData[uid]; if(!u) return; 
+            editUserId = uid; 
+            document.getElementById('u-shop').value = u.shopName || ''; 
+            document.getElementById('u-name').value = u.name || ''; 
+            document.getElementById('u-role').value = u.role || 'Retailer'; 
+            document.getElementById('u-status').value = u.accountStatus || 'Pending'; 
+            document.getElementById('u-wallet').value = u.walletBalance || 0; 
+            openModal('user-modal'); 
+        }
+
+        function saveUser() { 
+            db.ref('customers/'+editUserId).update({
+                shopName: document.getElementById('u-shop').value, name: document.getElementById('u-name').value, role: document.getElementById('u-role').value, accountStatus: document.getElementById('u-status').value, walletBalance: Number(document.getElementById('u-wallet').value)
+            }).then(() => { closeModal('user-modal'); alert("User successfully updated!"); }); 
+        }
+
+        function sendPassResetAdmin() {
+            if(!editUserId) return;
+            const uEmail = allCustomersData[editUserId].email;
+            if(!uEmail) return alert("No email address found for this user.");
+            auth.sendPasswordResetEmail(uEmail).then(() => { alert("Password reset link has been successfully sent to " + uEmail); }).catch(e => { alert("Error sending reset link: " + e.message); });
+        }
+        
         function uploadTempFile(inp){ const f=inp.files[0]; const fd=new FormData(); fd.append('image',f); fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`,{method:'POST',body:fd}).then(r=>r.json()).then(d=>{tempImgUrl=d.data.url; alert("Uploaded! Click Save to apply.");}); }
         function saveMarqueeAndOffer() { db.ref('app_settings/marquee').set({text: document.getElementById('marquee-input').value, active: document.getElementById('marquee-active').checked}); db.ref('global_offer').set({title: document.getElementById('go-title').value, code: document.getElementById('go-code').value.toUpperCase(), desc: document.getElementById('go-desc').value, active: document.getElementById('go-active').checked}); alert("Updated!"); }
         function saveReferralSettings() { db.ref('app_settings/refer_earn').set({signupBonus: Number(document.getElementById('ref-bonus').value), formCommission: Number(document.getElementById('ref-comm').value)}).then(()=>alert("Pricing Updated!")); }
         function saveInvoiceSettings() { db.ref('app_settings/invoice_details').set({name: document.getElementById('inv-c-name').value, address: document.getElementById('inv-c-address').value, email: document.getElementById('inv-c-email').value, phone: document.getElementById('inv-c-phone').value, gst: document.getElementById('inv-c-gst').value}).then(()=>alert("Invoice Details Saved")); }
         
         function saveLegalPolicies() { 
-            db.ref('app_settings/legal_policies').set({
-                terms: document.getElementById('lp-terms').value, 
-                privacy: document.getElementById('lp-privacy').value, 
-                refund: document.getElementById('lp-refund').value
-            }).then(()=>alert("Policies Saved")); 
-            // Also save to root for backward compatibility
-            db.ref('legal_policies').set({
-                terms: document.getElementById('lp-terms').value, 
-                privacy: document.getElementById('lp-privacy').value, 
-                refund: document.getElementById('lp-refund').value
-            });
+            db.ref('app_settings/legal_policies').set({ terms: document.getElementById('lp-terms').value, privacy: document.getElementById('lp-privacy').value, refund: document.getElementById('lp-refund').value }).then(()=>alert("Policies Saved")); 
+            db.ref('legal_policies').set({ terms: document.getElementById('lp-terms').value, privacy: document.getElementById('lp-privacy').value, refund: document.getElementById('lp-refund').value });
         }
         
         function saveSliderButton() { db.ref('slider_button').set({text: document.getElementById('sab-text').value, link: document.getElementById('sab-link').value, active: document.getElementById('sab-active').checked}); alert("Updated");}
@@ -786,88 +991,28 @@
         function openAIToolModal() { editAIToolId=null; tempImgUrl=""; document.getElementById('ai-img-file').value=''; document.getElementById('ai-name').value=''; document.getElementById('ai-link').value=''; document.getElementById('ai-embed').value=''; document.getElementById('ai-desc').value=''; document.getElementById('aitool-modal-title').innerText='Add AI Tool'; openModal('aitool-modal'); }
         
         function openProductModal(){ 
-            editProductId=null; 
-            currentCustomFields=[]; 
-            renderCustomFields(); 
-            tempImgUrl=""; 
-            document.getElementById('p-img-file').value=''; 
-            document.getElementById('p-name').value=''; 
-            document.getElementById('p-price-ret').value=''; 
-            document.getElementById('p-price-dist').value=''; 
-            document.getElementById('p-price-dm').value=''; 
-            document.getElementById('p-desc').value=''; 
-            document.getElementById('p-headline').value=''; 
+            editProductId=null; currentCustomFields=[]; renderCustomFields(); tempImgUrl=""; 
+            document.getElementById('p-img-file').value=''; document.getElementById('p-name').value=''; document.getElementById('p-price-ret').value=''; document.getElementById('p-price-dist').value=''; document.getElementById('p-price-dm').value=''; document.getElementById('p-desc').value=''; document.getElementById('p-headline').value=''; 
             
-            // Custom Buttons Reset
-            document.getElementById('p-yt-link').value='';
-            document.getElementById('p-btn1-text').value='Apply Now';
-            document.getElementById('p-btn1-type').value='form';
-            document.getElementById('p-btn1-link').value='';
-            document.getElementById('p-btn1-link').style.display='none';
-            document.getElementById('p-btn2-show').checked=false;
-            document.getElementById('p-btn2-text').value='Open Link';
-            document.getElementById('p-btn2-type').value='link';
-            document.getElementById('p-btn2-link').value='';
-            document.getElementById('p-btn2-link').style.display='block';
-            
+            document.getElementById('p-yt-link').value=''; document.getElementById('p-btn1-text').value='Apply Now'; document.getElementById('p-btn1-type').value='form'; document.getElementById('p-btn1-link').value=''; document.getElementById('p-btn1-link').style.display='none'; document.getElementById('p-btn2-show').checked=false; document.getElementById('p-btn2-text').value='Open Link'; document.getElementById('p-btn2-type').value='link'; document.getElementById('p-btn2-link').value=''; document.getElementById('p-btn2-link').style.display='block';
             openModal('product-modal'); 
         }
         
         function openEditProduct(key) { 
-            let p=allAdminProducts[key]; 
-            editProductId=key; 
-            currentCustomFields=p.customForm||[]; 
-            renderCustomFields(); 
-            document.getElementById('p-name').value=p.title; 
-            document.getElementById('p-price-ret').value=p.priceRet||p.price; 
-            document.getElementById('p-price-dist').value=p.priceDist||p.price; 
-            document.getElementById('p-price-dm').value=p.priceDM||p.price; 
-            document.getElementById('p-desc').value=p.description||''; 
-            document.getElementById('p-headline').value = p.headline || ''; 
+            let p=allAdminProducts[key]; editProductId=key; currentCustomFields=p.customForm||[]; renderCustomFields(); 
+            document.getElementById('p-name').value=p.title; document.getElementById('p-price-ret').value=p.priceRet||p.price; document.getElementById('p-price-dist').value=p.priceDist||p.price; document.getElementById('p-price-dm').value=p.priceDM||p.price; document.getElementById('p-desc').value=p.description||''; document.getElementById('p-headline').value = p.headline || ''; 
             
-            // Load Buttons & YT Link
-            document.getElementById('p-yt-link').value = p.ytLink || '';
-            document.getElementById('p-btn1-text').value = p.btn1Text || 'Apply Now';
-            document.getElementById('p-btn1-type').value = p.btn1Type || 'form';
-            document.getElementById('p-btn1-link').value = p.btn1Link || '';
-            document.getElementById('p-btn1-link').style.display = (p.btn1Type==='link') ? 'block' : 'none';
-            
-            // Backward compatibility for older products which used 'serviceLink'
-            document.getElementById('p-btn2-show').checked = p.btn2Show !== undefined ? p.btn2Show : (p.serviceLink ? true : false);
-            document.getElementById('p-btn2-text').value = p.btn2Text || 'Open Link';
-            document.getElementById('p-btn2-type').value = p.btn2Type || 'link';
-            document.getElementById('p-btn2-link').value = p.btn2Link || p.serviceLink || '';
-            document.getElementById('p-btn2-link').style.display = (p.btn2Type==='link') ? 'block' : 'none';
+            document.getElementById('p-yt-link').value = p.ytLink || ''; document.getElementById('p-btn1-text').value = p.btn1Text || 'Apply Now'; document.getElementById('p-btn1-type').value = p.btn1Type || 'form'; document.getElementById('p-btn1-link').value = p.btn1Link || ''; document.getElementById('p-btn1-link').style.display = (p.btn1Type==='link') ? 'block' : 'none';
+            document.getElementById('p-btn2-show').checked = p.btn2Show !== undefined ? p.btn2Show : (p.serviceLink ? true : false); document.getElementById('p-btn2-text').value = p.btn2Text || 'Open Link'; document.getElementById('p-btn2-type').value = p.btn2Type || 'link'; document.getElementById('p-btn2-link').value = p.btn2Link || p.serviceLink || ''; document.getElementById('p-btn2-link').style.display = (p.btn2Type==='link') ? 'block' : 'none';
 
-            tempImgUrl=p.imageUrl; 
-            openModal('product-modal'); 
+            tempImgUrl=p.imageUrl; openModal('product-modal'); 
         }
         
         function saveProduct(){ 
             const pData={
-                title:document.getElementById('p-name').value, 
-                priceRet:document.getElementById('p-price-ret').value, 
-                priceDist:document.getElementById('p-price-dist').value, 
-                priceDM:document.getElementById('p-price-dm').value, 
-                price:document.getElementById('p-price-ret').value, 
-                category:document.getElementById('p-cat').value, 
-                headline:document.getElementById('p-headline').value, 
-                description:document.getElementById('p-desc').value, 
-                imageUrl:tempImgUrl, 
-                customForm:currentCustomFields,
-                
-                // New Action Buttons Data
-                ytLink: document.getElementById('p-yt-link').value,
-                btn1Text: document.getElementById('p-btn1-text').value,
-                btn1Type: document.getElementById('p-btn1-type').value,
-                btn1Link: document.getElementById('p-btn1-link').value,
-                btn2Show: document.getElementById('p-btn2-show').checked,
-                btn2Text: document.getElementById('p-btn2-text').value,
-                btn2Type: document.getElementById('p-btn2-type').value,
-                btn2Link: document.getElementById('p-btn2-link').value,
-                serviceLink: document.getElementById('p-btn2-link').value // Maintain compatibility
+                title:document.getElementById('p-name').value, priceRet:document.getElementById('p-price-ret').value, priceDist:document.getElementById('p-price-dist').value, priceDM:document.getElementById('p-price-dm').value, price:document.getElementById('p-price-ret').value, category:document.getElementById('p-cat').value, headline:document.getElementById('p-headline').value, description:document.getElementById('p-desc').value, imageUrl:tempImgUrl, customForm:currentCustomFields,
+                ytLink: document.getElementById('p-yt-link').value, btn1Text: document.getElementById('p-btn1-text').value, btn1Type: document.getElementById('p-btn1-type').value, btn1Link: document.getElementById('p-btn1-link').value, btn2Show: document.getElementById('p-btn2-show').checked, btn2Text: document.getElementById('p-btn2-text').value, btn2Type: document.getElementById('p-btn2-type').value, btn2Link: document.getElementById('p-btn2-link').value, serviceLink: document.getElementById('p-btn2-link').value 
             }; 
-            
             if(editProductId) db.ref('products/'+editProductId).update(pData).then(()=>closeModal('product-modal')); 
             else db.ref('products').push(pData).then(()=>closeModal('product-modal')); 
         }
