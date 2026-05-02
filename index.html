@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AJ INDIA SARVICES - Admin Portal</title>
-    <link rel="icon" type="image/png" href="logo.png" class="dynamic-admin-logo">
+    <!-- Default Favicon Updated -->
+    <link rel="icon" type="image/jpeg" href="logoa.jpg" class="dynamic-admin-logo">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
@@ -66,7 +67,7 @@
 
     <div id="login-screen" style="display:none;">
         <div class="login-box">
-            <img src="logo.png" class="dynamic-admin-logo" style="width: auto; height: 80px; margin-bottom: 15px;" onerror="this.src='logo.png'">
+            <img src="logoa.jpg" class="dynamic-admin-logo" style="width: auto; height: 80px; margin-bottom: 15px;" onerror="this.onerror=null; this.src='https://via.placeholder.com/150x80?text=AJ+INDIA+SARVICES'">
             <h2 style="margin-bottom: 20px; font-weight:900;">ADMIN PORTAL</h2>
             <input type="email" id="admin-email" placeholder="Admin/Staff Email" style="font-weight:bold;">
             <input type="password" id="admin-password" placeholder="•••••••••">
@@ -78,7 +79,7 @@
     <div id="admin-layout">
         <aside class="sidebar">
             <div style="padding:20px; text-align:center; border-bottom:1px solid #334155; position: sticky; top: 0; background: var(--sidebar-bg); z-index: 10;">
-                <img src="logo.png" class="dynamic-admin-logo" style="width:auto; height: 60px; background:#fff; border-radius:8px; padding:5px; transition: 0.3s;" onerror="this.src='logo.png'">
+                <img src="logoa.jpg" class="dynamic-admin-logo" style="width:auto; height: 60px; background:#fff; border-radius:8px; padding:5px; transition: 0.3s;" onerror="this.onerror=null; this.src='https://via.placeholder.com/150x80?text=AJ+INDIA+SARVICES'">
             </div>
             
             <div class="nav-item active" onclick="switchPage('orders', this)"><i class="fa-solid fa-file-contract"></i> Applications</div>
@@ -184,18 +185,23 @@
             </section>
 
             <section id="customers" class="page" style="display:none;">
-                <div style="display:flex; gap:15px; margin-bottom:20px;">
-                    <div class="dashboard-box" style="flex:1; margin-bottom:0; text-align:center;">
+                <div style="display:flex; gap:15px; margin-bottom:20px; flex-wrap: wrap;">
+                    <div class="dashboard-box" style="flex:1; min-width: 150px; margin-bottom:0; text-align:center;">
                         <h3 style="color:var(--text-gray); font-size:0.9rem;">Total Users</h3>
                         <h2 id="ucount-total" style="color:var(--primary); font-size:1.8rem; margin-top:5px;">0</h2>
                     </div>
-                    <div class="dashboard-box" style="flex:1; margin-bottom:0; text-align:center;">
+                    <div class="dashboard-box" style="flex:1; min-width: 150px; margin-bottom:0; text-align:center;">
                         <h3 style="color:var(--text-gray); font-size:0.9rem;">Active Users</h3>
                         <h2 id="ucount-active" style="color:var(--success); font-size:1.8rem; margin-top:5px;">0</h2>
                     </div>
-                    <div class="dashboard-box" style="flex:1; margin-bottom:0; text-align:center;">
+                    <div class="dashboard-box" style="flex:1; min-width: 150px; margin-bottom:0; text-align:center;">
                         <h3 style="color:var(--text-gray); font-size:0.9rem;">Pending Users</h3>
                         <h2 id="ucount-pending" style="color:var(--danger); font-size:1.8rem; margin-top:5px;">0</h2>
+                    </div>
+                    <!-- NEW: TOTAL USER WALLET BALANCE DISPLAY -->
+                    <div class="dashboard-box" style="flex:1; min-width: 150px; margin-bottom:0; text-align:center; background:#f0fdf4; border:1px solid #bbf7d0;">
+                        <h3 style="color:var(--text-gray); font-size:0.9rem;">Total Users Wallet</h3>
+                        <h2 id="ucount-wallet" style="color:var(--success); font-size:1.8rem; margin-top:5px;">₹0</h2>
                     </div>
                 </div>
 
@@ -506,9 +512,9 @@
         let isSuperAdmin = false;
         
         let masterOrders=[], currentOrdersToDisplay=[], allCustomersData={}, allCustomersArray=[], allProductsData={}, currentCustomFields={}, allAITools={}, allAdminProducts={};
-        let globalWallet = []; // Holds wallet requests for analytics
+        let globalWallet = []; 
         let editProductId=null, editUserId=null, editAIToolId=null, tempImgUrl="";
-        let salesChartInstance = null; let appLogoUrl = "logo.png"; let compCertUrl = "";
+        let salesChartInstance = null; let appLogoUrl = "logoa.jpg"; let compCertUrl = "";
         let currentOrderId="", currentTicketId="", currentTicketUid="", currentResultUrl="";
         let globalChartData = {};
         let adminDataLoaded = false;
@@ -526,7 +532,6 @@
             });
         }
 
-        // DATE PARSERS FOR FLAWLESS 7-DAY ANALYTICS
         function formatDateStandard(d) {
             let day = ("0" + d.getDate()).slice(-2);
             let month = ("0" + (d.getMonth() + 1)).slice(-2);
@@ -560,7 +565,6 @@
             const now = new Date();
             const todayStr = formatDateStandard(now);
             
-            // Build 7 day map
             let chartDataMap = {};
             for(let i=6; i>=0; i--) {
                 let d = new Date();
@@ -568,10 +572,8 @@
                 chartDataMap[formatShortDate(d)] = 0;
             }
 
-            // Aggregate Orders (Exclude Wallet Payments to prevent double count)
             masterOrders.forEach(o => {
                 if(o.status === 'Pending') pendingCount++;
-                
                 let isWalletPay = (o.utr === 'WALLET-PAY'); 
                 
                 if(o.status === 'Delivered' && !isWalletPay) {
@@ -586,7 +588,6 @@
                 }
             });
 
-            // Aggregate Wallet Loads
             globalWallet.forEach(w => {
                 if(w.status === 'Approved') {
                     let amt = Number(w.amount) || 0;
@@ -670,11 +671,17 @@
 
         function renderOrdersTable(ordersData) {
             currentOrdersToDisplay = ordersData; const b = document.getElementById('orders-table-body'); b.innerHTML = '';
+            
+            if(ordersData.length === 0) {
+                b.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:20px; font-weight:bold; color:var(--text-gray);">No Applications Found</td></tr>`;
+                return;
+            }
+            
             ordersData.forEach(o => {
                 let statSel=`<select onchange="updateStatus('${o.key}', '${o.userId}', this.value)" style="padding:4px; margin-top:5px; border-radius:4px;"><option value="Pending" ${o.status==='Pending'?'selected':''}>Pending</option><option value="Processing" ${o.status==='Processing'?'selected':''}>Processing</option><option value="Delivered" ${o.status==='Delivered'?'selected':''}>Completed</option><option value="Cancelled" ${o.status==='Cancelled'?'selected':''}>Cancelled</option></select>`;
                 let resBtn = o.resultUrl ? `<a href="${escapeHTML(o.resultUrl)}" target="_blank" style="color:var(--success); font-size:0.8rem; font-weight:bold;">View Sent</a>` : `<button onclick="openResultModal('${o.key}', '${o.userId}')" style="padding:6px; font-size:0.75rem; background:var(--primary); color:#fff; border:none; border-radius:4px; margin-top:5px;">Upload Result</button>`;
                 
-                // REMOVED escapeHTML from o.extraDetails HERE so HTML renders properly
+                // HTML FIX FOR EXTRA DETAILS
                 let extraInfo = o.extraDetails ? `<div style="background:#f1f5f9; padding:6px; font-size:0.8rem; margin-top:6px; border-radius:6px; color:#334155; line-height:1.4;">${o.extraDetails}</div>` : '';
                 
                 let docs = o.uploadedDocs ? `<button onclick="viewCustomImages('${o.key}')" class="action-btn" style="font-size:0.8rem; margin-top:5px;"><i class="fa-solid fa-file"></i> Docs (${o.uploadedDocs.length})</button>` : '';
@@ -692,7 +699,7 @@
             if(s.exists()) {
                 s.forEach(c => {
                     const h = c.val(); allHeadlinesData[c.key] = h;
-                    let imgDisplay = h.imageUrl ? `<img src="${h.imageUrl}" onerror="this.src=appLogoUrl" width="30" style="border-radius:4px;">` : `<img src="${appLogoUrl}" width="30" style="border-radius:4px;">`;
+                    let imgDisplay = h.imageUrl ? `<img src="${h.imageUrl}" onerror="this.onerror=null; this.src=window.appLogoUrl || 'logoa.jpg';" width="30" style="border-radius:4px;">` : `<img src="${appLogoUrl}" onerror="this.onerror=null; this.src='logoa.jpg';" width="30" style="border-radius:4px;">`;
                     if(b) b.innerHTML += `<tr><td>${imgDisplay}</td><td><b>${escapeHTML(h.title)}</b></td><td><button class="action-btn" onclick="editHeadline('${c.key}')"><i class="fa-solid fa-pen"></i></button><button class="action-btn" onclick="deleteItem('service_headlines','${c.key}')"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`;
                     if(sel) sel.innerHTML += `<option value="${escapeHTML(h.title)}">${escapeHTML(h.title)}</option>`;
                 });
@@ -791,7 +798,7 @@
                 db.ref('customers').on('value', s => {
                     allCustomersData = {};
                     allCustomersArray = [];
-                    let totalU = 0, activeU = 0, pendingU = 0;
+                    let totalU = 0, activeU = 0, pendingU = 0, totalWalletBal = 0;
 
                     if(s.exists()){ 
                         s.forEach(c => { 
@@ -803,6 +810,8 @@
                             totalU++;
                             if(u.accountStatus === 'Active') activeU++;
                             else pendingU++;
+
+                            totalWalletBal += Number(u.walletBalance) || 0;
                         }); 
                     } 
                     
@@ -810,6 +819,7 @@
                     if(document.getElementById('ucount-total')) document.getElementById('ucount-total').innerText = totalU;
                     if(document.getElementById('ucount-active')) document.getElementById('ucount-active').innerText = activeU;
                     if(document.getElementById('ucount-pending')) document.getElementById('ucount-pending').innerText = pendingU;
+                    if(document.getElementById('ucount-wallet')) document.getElementById('ucount-wallet').innerText = "₹" + totalWalletBal;
                     
                     filterCustomers(); 
                 });
@@ -853,50 +863,47 @@
             }
             db.ref('tickets').on('value', s=>{ const b=document.getElementById('tickets-table-body'); b.innerHTML=''; s.forEach(c=>{ const t=c.val(); b.innerHTML+=`<tr><td>${escapeHTML(t.shop)}</td><td>${escapeHTML(t.msg)}</td><td>${escapeHTML(t.reply||'No Reply')}</td><td><button onclick="openReplyModal('${c.key}', '${t.uid}')" style="background:var(--primary); color:#fff; border:none; padding:5px; border-radius:5px;">Reply</button></td></tr>`; }); });
             
-            // -------------------------------------------------------------
-            // DYNAMIC FALLBACK LOGO IMPLEMENTATION (REPLACES 'logo.png')
-            // -------------------------------------------------------------
-
             db.ref('products').on('value', s=>{ 
                 const b=document.getElementById('products-table-body'); b.innerHTML=''; allAdminProducts={}; 
+                if(!s.exists() || s.numChildren() === 0) { b.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px; font-weight:bold; color:var(--text-gray);">No Services Found. Add a new service!</td></tr>'; return; }
                 s.forEach(c=>{ 
                     const p=c.val()||{}; allAdminProducts[c.key]=p; 
                     let pImg = p.imageUrl || appLogoUrl; 
-                    b.innerHTML+=`<tr><td><img src="${pImg}" onerror="this.src=appLogoUrl" width="50" style="border-radius:8px;"></td><td><b>${escapeHTML(p.title)}</b><br><small>${escapeHTML(p.category)}</small></td><td>₹${p.priceRet} / ₹${p.priceDist} / ₹${p.priceDM}</td><td><button class="action-btn" onclick="openEditProduct('${c.key}')"><i class="fa-solid fa-pen"></i></button><button class="action-btn" onclick="db.ref('products/${c.key}').remove()"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; 
+                    b.innerHTML+=`<tr><td><img src="${pImg}" onerror="this.onerror=null; this.src=window.appLogoUrl || 'logoa.jpg';" width="50" style="border-radius:8px;"></td><td><b>${escapeHTML(p.title)}</b><br><small>${escapeHTML(p.category)}</small></td><td>₹${p.priceRet} / ₹${p.priceDist} / ₹${p.priceDM}</td><td><button class="action-btn" onclick="openEditProduct('${c.key}')"><i class="fa-solid fa-pen"></i></button><button class="action-btn" onclick="db.ref('products/${c.key}').remove()"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; 
                 }); 
             });
             
             db.ref('ai_tools').on('value', s=>{ 
                 const b=document.getElementById('aitools-table-body'); b.innerHTML=''; allAITools={}; 
-                if(s.exists()){ 
-                    s.forEach(c=>{ 
-                        const t=c.val()||{}; allAITools[c.key]=t; 
-                        let linkText = t.embed ? `<span style="color:var(--success); font-weight:bold;">HTML Embedded</span>` : (t.link ? `<a href="${escapeHTML(t.link)}" target="_blank" style="color:var(--primary); font-weight:bold;">View Link</a>` : 'No Link'); 
-                        let aiImg = t.imageUrl || appLogoUrl; 
-                        b.innerHTML+=`<tr><td><img src="${aiImg}" onerror="this.src=appLogoUrl" width="45" style="border-radius:8px; border:1px solid var(--border-color);"></td><td><b>${escapeHTML(t.title)}</b><br><small>${escapeHTML(t.description)}</small></td><td>${linkText}</td><td><button class="action-btn" onclick="openEditAITool('${c.key}')"><i class="fa-solid fa-pen"></i></button><button class="action-btn" onclick="deleteItem('ai_tools','${c.key}')"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; 
-                    }); 
-                } 
+                if(!s.exists() || s.numChildren() === 0){ b.innerHTML='<tr><td colspan="4" style="text-align:center; padding:20px; font-weight:bold; color:var(--text-gray);">No AI Tools Found. Add one!</td></tr>'; return; }
+                s.forEach(c=>{ 
+                    const t=c.val()||{}; allAITools[c.key]=t; 
+                    let linkText = t.embed ? `<span style="color:var(--success); font-weight:bold;">HTML Embedded</span>` : (t.link ? `<a href="${escapeHTML(t.link)}" target="_blank" style="color:var(--primary); font-weight:bold;">View Link</a>` : 'No Link'); 
+                    let aiImg = t.imageUrl || appLogoUrl; 
+                    b.innerHTML+=`<tr><td><img src="${aiImg}" onerror="this.onerror=null; this.src=window.appLogoUrl || 'logoa.jpg';" width="45" style="border-radius:8px; border:1px solid var(--border-color);"></td><td><b>${escapeHTML(t.title)}</b><br><small>${escapeHTML(t.description)}</small></td><td>${linkText}</td><td><button class="action-btn" onclick="openEditAITool('${c.key}')"><i class="fa-solid fa-pen"></i></button><button class="action-btn" onclick="deleteItem('ai_tools','${c.key}')"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; 
+                }); 
             });
             
             db.ref('categories').on('value', s=>{ 
                 const b=document.getElementById('categories-table-body'); b.innerHTML=''; const sel=document.getElementById('p-cat'); if(sel) sel.innerHTML='<option value="">Select Category</option>'; 
+                if(!s.exists() || s.numChildren() === 0){ b.innerHTML='<tr><td colspan="3" style="text-align:center; padding:20px; font-weight:bold; color:var(--text-gray);">No Categories Found</td></tr>'; return; }
                 s.forEach(c=>{ 
-                    const cat=c.val(); 
-                    let catImg = cat.imageUrl || appLogoUrl; 
-                    b.innerHTML+=`<tr><td><img src="${catImg}" onerror="this.src=appLogoUrl" width="40"></td><td>${escapeHTML(cat.title)}</td><td><button class="action-btn" onclick="db.ref('categories/${c.key}').remove()"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; 
+                    const cat=c.val(); let catImg = cat.imageUrl || appLogoUrl; 
+                    b.innerHTML+=`<tr><td><img src="${catImg}" onerror="this.onerror=null; this.src=window.appLogoUrl || 'logoa.jpg';" width="40"></td><td>${escapeHTML(cat.title)}</td><td><button class="action-btn" onclick="db.ref('categories/${c.key}').remove()"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; 
                     if(sel) sel.innerHTML+=`<option value="${escapeHTML(cat.title)}">${escapeHTML(cat.title)}</option>`; 
                 }); 
             });
             
             db.ref('banners').on('value', s=>{ 
                 const b=document.getElementById('banners-table-body'); b.innerHTML=''; 
+                if(!s.exists() || s.numChildren() === 0){ b.innerHTML='<tr><td colspan="3" style="text-align:center; padding:20px; font-weight:bold; color:var(--text-gray);">No Banners Found</td></tr>'; return; }
                 s.forEach(c=>{ 
                     let banImg = c.val().imageUrl || appLogoUrl; 
-                    b.innerHTML+=`<tr><td><img src="${banImg}" onerror="this.src=appLogoUrl" width="100"></td><td>${escapeHTML(c.val().title)}</td><td><button class="action-btn" onclick="db.ref('banners/${c.key}').remove()"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; 
+                    b.innerHTML+=`<tr><td><img src="${banImg}" onerror="this.onerror=null; this.src=window.appLogoUrl || 'logoa.jpg';" width="100"></td><td>${escapeHTML(c.val().title)}</td><td><button class="action-btn" onclick="db.ref('banners/${c.key}').remove()"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; 
                 }); 
             });
             
-            db.ref('promocodes').on('value', s => { const b=document.getElementById('promocodes-table-body'); if(b){ b.innerHTML=''; s.forEach(c => { b.innerHTML+=`<tr><td><b>${escapeHTML(c.key)}</b></td><td><b>₹${c.val().discount}</b></td><td><button class="action-btn" onclick="deleteItem('promocodes','${c.key}')"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; }); } });
+            db.ref('promocodes').on('value', s => { const b=document.getElementById('promocodes-table-body'); if(b){ b.innerHTML=''; if(!s.exists()){ b.innerHTML='<tr><td colspan="3" style="text-align:center; padding:20px; font-weight:bold; color:var(--text-gray);">No Promo Codes Found</td></tr>'; return;} s.forEach(c => { b.innerHTML+=`<tr><td><b>${escapeHTML(c.key)}</b></td><td><b>₹${c.val().discount}</b></td><td><button class="action-btn" onclick="deleteItem('promocodes','${c.key}')"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; }); } });
             db.ref('global_offer').on('value', snap => { if(snap.exists() && document.getElementById('go-title')) { const data=snap.val(); document.getElementById('go-title').value=data.title||''; document.getElementById('go-code').value=data.code||''; document.getElementById('go-desc').value=data.desc||''; document.getElementById('go-active').checked=data.active||false;} });
             db.ref('slider_button').on('value', snap => { if(snap.exists() && document.getElementById('sab-text')) { const data=snap.val(); document.getElementById('sab-text').value=data.text||''; document.getElementById('sab-link').value=data.link||''; document.getElementById('sab-active').checked=data.active||false; } });
         }
@@ -917,7 +924,7 @@
             }
             
             if(filtered.length === 0) {
-                b.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px;">No Users Found</td></tr>`;
+                b.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px; font-weight:bold; color:var(--text-gray);">No Users Found</td></tr>`;
                 return;
             }
             
