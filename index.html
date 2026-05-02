@@ -70,6 +70,12 @@
             <h2 style="margin-bottom: 20px; font-weight:900;">ADMIN PORTAL</h2>
             <input type="email" id="admin-email" placeholder="Admin/Staff Email" style="font-weight:bold;">
             <input type="password" id="admin-password" placeholder="•••••••••">
+            
+            <!-- Forgot Password Button Added Here -->
+            <div style="text-align: right; margin-bottom: 15px;">
+                <span onclick="adminResetPassword()" style="color: #2563eb; font-size: 0.85rem; font-weight: bold; cursor: pointer;">Forgot Password?</span>
+            </div>
+
             <button class="btn-primary" onclick="loginAdmin()" style="width:100%; font-size:1.1rem; background:#2563eb;" id="login-btn">Login Securely</button>
             <div id="login-error" style="color:#ef4444; background:#fee2e2; border:1px solid #fca5a5; padding:10px; border-radius:8px; display:none; margin-top:15px; font-size:0.85rem; text-align:left;"></div>
         </div>
@@ -576,7 +582,9 @@
         const auth = adminApp.auth(); 
         const IMGBB_API_KEY = "122cc16740d69ce4f60b53f0effed6c1";
         
-        const ADMIN_EMAIL = "ajsarvices@gmail.com"; 
+        // Ekhane tomar Email ar UID set kora holo
+        const ADMIN_EMAIL = "ajindiasarvices@gmail.com"; 
+        const ADMIN_UID = "Eo48O4mDAPXSjEAZOOpbNFYSRbI3";
         let isSuperAdmin = false;
         
         let masterOrders=[], currentOrdersToDisplay=[], allCustomersData={}, allCustomersArray=[], allProductsData={}, currentCustomFields={}, allAITools={}, allAdminProducts={};
@@ -605,7 +613,6 @@
             });
         }
 
-        // PRICE FORMATTER (SHOW FREE IF 0)
         function formatPrice(val) {
             if(!val || val === "0" || val === 0) return "<b style='color:var(--success)'>Free</b>";
             return "₹" + val;
@@ -697,7 +704,8 @@
 
         auth.onAuthStateChanged((user) => {
             if (user) {
-                isSuperAdmin = (user.email && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase());
+                // Ekhane check kora hochhe tomar specified UID & Email ache ki na
+                isSuperAdmin = (user.uid === ADMIN_UID || (user.email && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()));
                 if(!isSuperAdmin) {
                     db.ref('app_settings/staff_users/'+user.uid).once('value').then(snap => {
                         if(snap.exists()) { setupAdminPanel(true); } else { blockAdminAccess("Access Denied! You are not an Admin or Staff."); }
@@ -738,6 +746,24 @@
                 localStorage.setItem('ajAdminLogged', 'true');
             }).catch((error) => { 
                 hideGlobalLoader(); err.innerHTML = "<b>Login Failed!</b><br>Wrong credentials or account not found."; err.style.display = 'block'; btn.innerHTML = `Login Securely`; 
+            });
+        }
+        
+        // Notun Forgot Password Function
+        function adminResetPassword() {
+            const em = document.getElementById('admin-email').value.trim();
+            const err = document.getElementById('login-error');
+            if(!em) {
+                err.innerHTML = "<b>Forgot Password?</b><br>Upore doya kore tomar Email id ta lekho, tarpor abar click koro.";
+                err.style.display = 'block';
+                return;
+            }
+            err.style.display = 'none';
+            auth.sendPasswordResetEmail(em).then(() => {
+                alert("Password Reset link pathano hoyeche!\nTomar Inbox r Spam folder e check koro.");
+            }).catch((error) => {
+                err.innerHTML = "<b>Error!</b><br>" + error.message;
+                err.style.display = 'block';
             });
         }
 
