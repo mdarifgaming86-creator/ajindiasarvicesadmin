@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AJ INDIA SARVICES - Admin Portal</title>
-    <!-- Default Favicon Updated -->
     <link rel="icon" type="image/jpeg" href="logoa.jpg" class="dynamic-admin-logo">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -148,7 +147,7 @@
             <section id="wallet" class="page" style="display:none;">
                 <div class="table-container">
                     <h3>Wallet Add Money Requests</h3>
-                    <table><thead><tr><th>User Info</th><th>Amount</th><th>UTR Number</th><th>Status</th><th>Action</th></tr></thead><tbody id="wallet-table-body"></tbody></table>
+                    <table><thead><tr><th>User Info</th><th>Amount</th><th>UTR Number</th><th>Status Control</th><th>Action</th></tr></thead><tbody id="wallet-table-body"></tbody></table>
                 </div>
             </section>
 
@@ -198,7 +197,6 @@
                         <h3 style="color:var(--text-gray); font-size:0.9rem;">Pending Users</h3>
                         <h2 id="ucount-pending" style="color:var(--danger); font-size:1.8rem; margin-top:5px;">0</h2>
                     </div>
-                    <!-- NEW: TOTAL USER WALLET BALANCE DISPLAY -->
                     <div class="dashboard-box" style="flex:1; min-width: 150px; margin-bottom:0; text-align:center; background:#f0fdf4; border:1px solid #bbf7d0;">
                         <h3 style="color:var(--text-gray); font-size:0.9rem;">Total Users Wallet</h3>
                         <h2 id="ucount-wallet" style="color:var(--success); font-size:1.8rem; margin-top:5px;">₹0</h2>
@@ -249,22 +247,28 @@
 
             <section id="categories" class="page" style="display:none;">
                 <div class="table-container">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:15px;"><h3>Categories</h3><button class="btn-primary" onclick="openCategoryModal()">+ Add</button></div>
-                    <table><tbody id="categories-table-body"></tbody></table>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:15px;"><h3>Categories</h3><button class="btn-primary" onclick="openCategoryModal()">+ Add Category</button></div>
+                    <table>
+                        <thead><tr><th>Image</th><th>Category Name</th><th>Action</th></tr></thead>
+                        <tbody id="categories-table-body"></tbody>
+                    </table>
                 </div>
             </section>
 
             <section id="promocodes" class="page" style="display:none;">
                 <div class="table-container">
                     <div style="display:flex; justify-content:space-between; margin-bottom:15px;"><h3>Promo Codes</h3><button class="btn-primary" onclick="openPromoModal()">+ Add Code</button></div>
-                    <table><thead><tr><th>Code</th><th>Discount (₹)</th><th>Action</th></tr></thead><tbody id="promocodes-table-body"></tbody></table>
+                    <table><thead><tr><th>Code</th><th>Discount (%)</th><th>Action</th></tr></thead><tbody id="promocodes-table-body"></tbody></table>
                 </div>
             </section>
 
             <section id="banners" class="page" style="display:none;">
                 <div class="table-container">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:15px;"><h3>Banners</h3><button class="btn-primary" onclick="openBannerModal()">+ Add Banner</button></div>
-                    <table><tbody id="banners-table-body"></tbody></table>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:15px;"><h3>Slider Banners</h3><button class="btn-primary" onclick="openBannerModal()">+ Add Banner</button></div>
+                    <table>
+                        <thead><tr><th>Image</th><th>Title</th><th>Action</th></tr></thead>
+                        <tbody id="banners-table-body"></tbody>
+                    </table>
                 </div>
             </section>
 
@@ -389,6 +393,31 @@
         </div>
     </div>
 
+    <!-- Helpdesk Add/Edit Modal -->
+    <div id="edit-ticket-modal" class="modal-overlay">
+        <div class="modal-content">
+            <i class="fa-solid fa-xmark close-btn" onclick="closeModal('edit-ticket-modal')"></i>
+            <h3 style="margin-bottom: 15px;">Edit Ticket</h3>
+            <label style="font-size:0.8rem; font-weight:bold;">Issue Message</label>
+            <textarea id="et-msg" rows="3"></textarea>
+            <label style="font-size:0.8rem; font-weight:bold;">Reply Message</label>
+            <textarea id="et-reply" rows="3"></textarea>
+            <button class="btn-primary" onclick="saveEditedTicket()" style="width:100%;">Save Ticket Changes</button>
+        </div>
+    </div>
+
+    <div id="wallet-edit-modal" class="modal-overlay">
+        <div class="modal-content">
+            <i class="fa-solid fa-xmark close-btn" onclick="closeModal('wallet-edit-modal')"></i>
+            <h3 style="margin-bottom: 15px;">Edit Wallet Request</h3>
+            <label style="font-weight:bold; font-size:0.85rem;">Requested Amount (₹)</label>
+            <input type="number" id="ew-amount" placeholder="Amount">
+            <label style="font-weight:bold; font-size:0.85rem;">UTR Number</label>
+            <input type="text" id="ew-utr" placeholder="UTR Number">
+            <button class="btn-primary" onclick="saveWalletReq()" style="width:100%;">Save Changes</button>
+        </div>
+    </div>
+
     <div id="result-modal" class="modal-overlay"><div class="modal-content text-center"><i class="fa-solid fa-xmark close-btn" onclick="closeModal('result-modal')"></i><h3>Upload Final Document</h3><input type="file" id="result-file" accept="application/pdf,image/*"><button class="btn-primary" onclick="saveResultDocument()" style="width:100%;">Upload & Complete</button></div></div>
     <div id="reply-modal" class="modal-overlay"><div class="modal-content"><i class="fa-solid fa-xmark close-btn" onclick="closeModal('reply-modal')"></i><h3>Reply Ticket</h3><textarea id="reply-msg" rows="3"></textarea><button class="btn-primary" onclick="saveReply()">Send Reply</button></div></div>
     <div id="custom-image-modal" class="modal-overlay" onclick="closeModal('custom-image-modal')"><div class="modal-content"><h3 style="margin-bottom: 15px;">Customer Documents</h3><div id="custom-image-view-container" style="display:flex; flex-wrap:wrap; gap:10px;"></div></div></div>
@@ -437,7 +466,11 @@
             <h3>Add Service</h3>
             <input type="file" id="p-img-file" onchange="uploadTempFile(this)">
             <input type="text" id="p-name" placeholder="Service Name">
-            <div style="display:flex; gap:10px;"><input type="number" id="p-price-ret" placeholder="Retailer Price (₹)"><input type="number" id="p-price-dist" placeholder="Distributor Price (₹)"><input type="number" id="p-price-dm" placeholder="AJ Officer Price (₹)"></div>
+            <div style="display:flex; gap:10px;">
+                <input type="number" id="p-price-ret" placeholder="Retailer Price (₹) (0 = Free)">
+                <input type="number" id="p-price-dist" placeholder="Distributor Price (₹) (0 = Free)">
+                <input type="number" id="p-price-dm" placeholder="AJ Officer Price (₹) (0 = Free)">
+            </div>
             <div style="display:flex; gap:10px;"><select id="p-cat"><option value="">Select Category</option></select><select id="p-headline"><option value="">No Custom Headline</option></select></div>
             <textarea id="p-desc" placeholder="Service Description" rows="2"></textarea>
             
@@ -488,6 +521,12 @@
             <label style="font-size:0.8rem; font-weight:bold;">Tool Icon/Image</label>
             <input type="file" id="ai-img-file" onchange="uploadTempFile(this)">
             <input type="text" id="ai-name" placeholder="Tool Name (e.g. Photo Resizer)">
+            
+            <label style="font-size:0.8rem; font-weight:bold; margin-top:10px; display:block;">Custom Headline Group</label>
+            <select id="ai-headline" style="margin-bottom:12px;">
+                <option value="">No Custom Headline</option>
+            </select>
+
             <input type="url" id="ai-link" placeholder="Tool External URL (Optional)">
             <p style="font-size:0.8rem; text-align:center; font-weight:bold; margin:5px 0;">-- OR --</p>
             <textarea id="ai-embed" placeholder="Paste HTML / Iframe Embed Code Here" rows="3"></textarea>
@@ -496,9 +535,38 @@
         </div>
     </div>
     
-    <div id="promo-modal" class="modal-overlay"><div class="modal-content"><i class="fa-solid fa-xmark close-btn" onclick="closeModal('promo-modal')"></i><h3>Add Promo Code</h3><input type="text" id="promo-code-val" placeholder="CODE"><input type="number" id="promo-discount-val" placeholder="Discount ₹"><button class="btn-primary" onclick="savePromoCode()">Save Code</button></div></div>
-    <div id="category-modal" class="modal-overlay"><div class="modal-content"><i class="fa-solid fa-xmark close-btn" onclick="closeModal('category-modal')"></i><h3>Add Category</h3><input type="file" id="c-file" onchange="uploadTempFile(this)"><input type="text" id="c-name" placeholder="Category Name"><button class="btn-primary" onclick="saveCategory()">Save</button></div></div>
-    <div id="banner-modal" class="modal-overlay"><div class="modal-content"><i class="fa-solid fa-xmark close-btn" onclick="closeModal('banner-modal')"></i><h3>Add Banner</h3><input type="file" id="b-file" onchange="uploadTempFile(this)"><input type="text" id="b-title" placeholder="Title"><input type="url" id="b-link" placeholder="Link URL"><button class="btn-primary" onclick="saveBanner()">Save</button></div></div>
+    <div id="promo-modal" class="modal-overlay">
+        <div class="modal-content">
+            <i class="fa-solid fa-xmark close-btn" onclick="closeModal('promo-modal')"></i>
+            <h3>Add Promo Code</h3>
+            <label style="font-weight:bold; font-size:0.85rem;">Promo Code</label>
+            <input type="text" id="promo-code-val" placeholder="CODE">
+            <label style="font-weight:bold; font-size:0.85rem;">Discount (%)</label>
+            <input type="number" id="promo-discount-val" placeholder="Discount (%)">
+            <button class="btn-primary" onclick="savePromoCode()">Save Code</button>
+        </div>
+    </div>
+
+    <div id="category-modal" class="modal-overlay">
+        <div class="modal-content">
+            <i class="fa-solid fa-xmark close-btn" onclick="closeModal('category-modal')"></i>
+            <h3>Add / Edit Category</h3>
+            <input type="file" id="c-file" onchange="uploadTempFile(this)">
+            <input type="text" id="c-name" placeholder="Category Name">
+            <button class="btn-primary" onclick="saveCategory()">Save Category</button>
+        </div>
+    </div>
+
+    <div id="banner-modal" class="modal-overlay">
+        <div class="modal-content">
+            <i class="fa-solid fa-xmark close-btn" onclick="closeModal('banner-modal')"></i>
+            <h3>Add / Edit Banner</h3>
+            <input type="file" id="b-file" onchange="uploadTempFile(this)">
+            <input type="text" id="b-title" placeholder="Title">
+            <input type="url" id="b-link" placeholder="Link URL">
+            <button class="btn-primary" onclick="saveBanner()">Save Banner</button>
+        </div>
+    </div>
 
     <script>
         const firebaseConfig = { apiKey: "AIzaSyAw_-3KzAyG_i8vBb43xqD6gHUsDKupmxk", authDomain: "aj-sarvices-a8554.firebaseapp.com", databaseURL: "https://aj-sarvices-a8554-default-rtdb.firebaseio.com", projectId: "aj-sarvices-a8554", storageBucket: "aj-sarvices-a8554.firebasestorage.app", messagingSenderId: "109804150730", appId: "1:109804150730:web:e75006f44ef5e120d43933" };
@@ -513,14 +581,19 @@
         
         let masterOrders=[], currentOrdersToDisplay=[], allCustomersData={}, allCustomersArray=[], allProductsData={}, currentCustomFields={}, allAITools={}, allAdminProducts={};
         let globalWallet = []; 
+        let allTicketsData = {};
+        
         let editProductId=null, editUserId=null, editAIToolId=null, tempImgUrl="";
+        let editPromoId=null, editCategoryId=null, editBannerId=null, editWalletReqId=null, editTicketId=null;
+        
+        let allCategoriesData={}, allBannersData={}, allPromoCodesData={}, allWalletReqsData={};
+
         let salesChartInstance = null; let appLogoUrl = "logoa.jpg"; let compCertUrl = "";
         let currentOrderId="", currentTicketId="", currentTicketUid="", currentResultUrl="";
         let globalChartData = {};
         let adminDataLoaded = false;
         
         let allHeadlinesData = {};
-        let editHeadlineId = null;
         let tempHeadlineImgUrl = ""; 
         let orderLimit = 100;
 
@@ -530,6 +603,12 @@
                 const chars = { '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' };
                 return chars[tag] || tag;
             });
+        }
+
+        // PRICE FORMATTER (SHOW FREE IF 0)
+        function formatPrice(val) {
+            if(!val || val === "0" || val === 0) return "<b style='color:var(--success)'>Free</b>";
+            return "₹" + val;
         }
 
         function formatDateStandard(d) {
@@ -680,10 +759,7 @@
             ordersData.forEach(o => {
                 let statSel=`<select onchange="updateStatus('${o.key}', '${o.userId}', this.value)" style="padding:4px; margin-top:5px; border-radius:4px;"><option value="Pending" ${o.status==='Pending'?'selected':''}>Pending</option><option value="Processing" ${o.status==='Processing'?'selected':''}>Processing</option><option value="Delivered" ${o.status==='Delivered'?'selected':''}>Completed</option><option value="Cancelled" ${o.status==='Cancelled'?'selected':''}>Cancelled</option></select>`;
                 let resBtn = o.resultUrl ? `<a href="${escapeHTML(o.resultUrl)}" target="_blank" style="color:var(--success); font-size:0.8rem; font-weight:bold;">View Sent</a>` : `<button onclick="openResultModal('${o.key}', '${o.userId}')" style="padding:6px; font-size:0.75rem; background:var(--primary); color:#fff; border:none; border-radius:4px; margin-top:5px;">Upload Result</button>`;
-                
-                // HTML FIX FOR EXTRA DETAILS
                 let extraInfo = o.extraDetails ? `<div style="background:#f1f5f9; padding:6px; font-size:0.8rem; margin-top:6px; border-radius:6px; color:#334155; line-height:1.4;">${o.extraDetails}</div>` : '';
-                
                 let docs = o.uploadedDocs ? `<button onclick="viewCustomImages('${o.key}')" class="action-btn" style="font-size:0.8rem; margin-top:5px;"><i class="fa-solid fa-file"></i> Docs (${o.uploadedDocs.length})</button>` : '';
                 let oImg = o.img || appLogoUrl;
                 b.innerHTML+=`<tr><td><input type="checkbox" class="order-chk" value="${o.key}" data-uid="${o.userId}"></td><td>${o.key.slice(-5)}<br><small>${escapeHTML(o.date)}</small></td><td><b>${escapeHTML(o.userName)}</b><br><small>${escapeHTML(o.userEmail||'')}</small></td><td><b>${escapeHTML(o.title)}</b>${extraInfo}${docs}</td><td><b style="color:var(--primary);">₹${o.price}</b><br><code class="copy-utr" onclick="copyText('${escapeHTML(o.utr)}')">${escapeHTML(o.utr)}</code></td><td><span class="status-badge ${o.status}">${escapeHTML(o.status)}</span><br>${statSel}<br>${resBtn}</td><td><button class="action-btn" onclick="deleteItem('orders','${o.key}')"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`;
@@ -694,14 +770,20 @@
         function loadMoreOrders() { orderLimit += 100; loadAdminData(false); } 
 
         db.ref('service_headlines').on('value', s => {
-            allHeadlinesData = {}; const b = document.getElementById('headlines-table-body'); const sel = document.getElementById('p-headline');
-            if(b) b.innerHTML = ''; if(sel) sel.innerHTML = '<option value="">No Custom Headline</option>';
+            allHeadlinesData = {}; const b = document.getElementById('headlines-table-body'); 
+            const sel = document.getElementById('p-headline');
+            const aiSel = document.getElementById('ai-headline');
+            if(b) b.innerHTML = ''; 
+            if(sel) sel.innerHTML = '<option value="">No Custom Headline</option>';
+            if(aiSel) aiSel.innerHTML = '<option value="">No Custom Headline</option>';
+            
             if(s.exists()) {
                 s.forEach(c => {
                     const h = c.val(); allHeadlinesData[c.key] = h;
                     let imgDisplay = h.imageUrl ? `<img src="${h.imageUrl}" onerror="this.onerror=null; this.src=window.appLogoUrl || 'logoa.jpg';" width="30" style="border-radius:4px;">` : `<img src="${appLogoUrl}" onerror="this.onerror=null; this.src='logoa.jpg';" width="30" style="border-radius:4px;">`;
                     if(b) b.innerHTML += `<tr><td>${imgDisplay}</td><td><b>${escapeHTML(h.title)}</b></td><td><button class="action-btn" onclick="editHeadline('${c.key}')"><i class="fa-solid fa-pen"></i></button><button class="action-btn" onclick="deleteItem('service_headlines','${c.key}')"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`;
                     if(sel) sel.innerHTML += `<option value="${escapeHTML(h.title)}">${escapeHTML(h.title)}</option>`;
+                    if(aiSel) aiSel.innerHTML += `<option value="${escapeHTML(h.title)}">${escapeHTML(h.title)}</option>`;
                 });
             }
         });
@@ -779,15 +861,19 @@
 
             // LOAD WALLET REQUESTS
             db.ref('wallet_requests').on('value', s=>{ 
-                globalWallet = [];
+                globalWallet = []; allWalletReqsData = {};
                 const b=document.getElementById('wallet-table-body'); if(b) b.innerHTML=''; 
                 if(s.exists()){
                     s.forEach(c=>{ 
-                        const w=c.val(); 
-                        w.key = c.key;
-                        globalWallet.push(w);
+                        const w=c.val(); w.key = c.key; 
+                        globalWallet.push(w); allWalletReqsData[c.key] = w;
                         if(w.status==='Pending' && b){ 
-                            b.innerHTML+=`<tr><td>${escapeHTML(w.name)}</td><td><b style="color:var(--success);">₹${w.amount}</b></td><td><code class="copy-utr" onclick="copyText('${escapeHTML(w.utr)}')">${escapeHTML(w.utr)}</code></td><td><button onclick="approveWallet('${c.key}','${w.uid}',${w.amount})" style="background:var(--success); color:#fff; border:none; padding:5px; border-radius:5px; margin-right:5px; cursor:pointer;">Approve</button><button onclick="db.ref('wallet_requests/${c.key}').update({status:'Rejected'})" style="background:red; color:#fff; border:none; padding:5px; border-radius:5px; cursor:pointer;">Reject</button></td></tr>`; 
+                            b.innerHTML+=`<tr><td>${escapeHTML(w.name)}</td><td><b style="color:var(--success);">₹${w.amount}</b></td><td><code class="copy-utr" onclick="copyText('${escapeHTML(w.utr)}')">${escapeHTML(w.utr)}</code></td>
+                            <td>
+                                <button onclick="approveWallet('${c.key}','${w.uid}',${w.amount})" style="background:var(--success); color:#fff; border:none; padding:5px; border-radius:5px; margin-right:5px; cursor:pointer;">Approve</button>
+                                <button onclick="db.ref('wallet_requests/${c.key}').update({status:'Rejected'})" style="background:red; color:#fff; border:none; padding:5px; border-radius:5px; cursor:pointer;">Reject</button>
+                            </td>
+                            <td><button class="action-btn" onclick="openEditWalletReq('${c.key}')" title="Edit Request"><i class="fa-solid fa-pen"></i></button></td></tr>`; 
                         } 
                     }); 
                 }
@@ -861,7 +947,21 @@
                     } 
                 });
             }
-            db.ref('tickets').on('value', s=>{ const b=document.getElementById('tickets-table-body'); b.innerHTML=''; s.forEach(c=>{ const t=c.val(); b.innerHTML+=`<tr><td>${escapeHTML(t.shop)}</td><td>${escapeHTML(t.msg)}</td><td>${escapeHTML(t.reply||'No Reply')}</td><td><button onclick="openReplyModal('${c.key}', '${t.uid}')" style="background:var(--primary); color:#fff; border:none; padding:5px; border-radius:5px;">Reply</button></td></tr>`; }); });
+            
+            // TICKETS UPDATED FOR EDIT & DELETE
+            db.ref('tickets').on('value', s=>{ 
+                const b=document.getElementById('tickets-table-body'); b.innerHTML=''; allTicketsData = {};
+                if(!s.exists() || s.numChildren() === 0){ b.innerHTML='<tr><td colspan="4" style="text-align:center; padding:20px; font-weight:bold; color:var(--text-gray);">No Tickets Found</td></tr>'; return; }
+                s.forEach(c=>{ 
+                    const t=c.val(); allTicketsData[c.key] = t;
+                    b.innerHTML+=`<tr><td>${escapeHTML(t.shop)}</td><td>${escapeHTML(t.msg)}</td><td>${escapeHTML(t.reply||'No Reply')}</td>
+                    <td>
+                        <button class="action-btn" onclick="openReplyModal('${c.key}', '${t.uid}')" title="Reply"><i class="fa-solid fa-reply" style="color:var(--success);"></i></button>
+                        <button class="action-btn" onclick="editTicket('${c.key}')" title="Edit"><i class="fa-solid fa-pen" style="color:var(--primary);"></i></button>
+                        <button class="action-btn" onclick="deleteItem('tickets','${c.key}')" title="Delete"><i class="fa-solid fa-trash" style="color:red;"></i></button>
+                    </td></tr>`; 
+                }); 
+            });
             
             db.ref('products').on('value', s=>{ 
                 const b=document.getElementById('products-table-body'); b.innerHTML=''; allAdminProducts={}; 
@@ -869,7 +969,7 @@
                 s.forEach(c=>{ 
                     const p=c.val()||{}; allAdminProducts[c.key]=p; 
                     let pImg = p.imageUrl || appLogoUrl; 
-                    b.innerHTML+=`<tr><td><img src="${pImg}" onerror="this.onerror=null; this.src=window.appLogoUrl || 'logoa.jpg';" width="50" style="border-radius:8px;"></td><td><b>${escapeHTML(p.title)}</b><br><small>${escapeHTML(p.category)}</small></td><td>₹${p.priceRet} / ₹${p.priceDist} / ₹${p.priceDM}</td><td><button class="action-btn" onclick="openEditProduct('${c.key}')"><i class="fa-solid fa-pen"></i></button><button class="action-btn" onclick="db.ref('products/${c.key}').remove()"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; 
+                    b.innerHTML+=`<tr><td><img src="${pImg}" onerror="this.onerror=null; this.src=window.appLogoUrl || 'logoa.jpg';" width="50" style="border-radius:8px;"></td><td><b>${escapeHTML(p.title)}</b><br><small>${escapeHTML(p.category)}</small></td><td>${formatPrice(p.priceRet)} / ${formatPrice(p.priceDist)} / ${formatPrice(p.priceDM)}</td><td><button class="action-btn" onclick="openEditProduct('${c.key}')"><i class="fa-solid fa-pen"></i></button><button class="action-btn" onclick="db.ref('products/${c.key}').remove()"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; 
                 }); 
             });
             
@@ -880,30 +980,42 @@
                     const t=c.val()||{}; allAITools[c.key]=t; 
                     let linkText = t.embed ? `<span style="color:var(--success); font-weight:bold;">HTML Embedded</span>` : (t.link ? `<a href="${escapeHTML(t.link)}" target="_blank" style="color:var(--primary); font-weight:bold;">View Link</a>` : 'No Link'); 
                     let aiImg = t.imageUrl || appLogoUrl; 
-                    b.innerHTML+=`<tr><td><img src="${aiImg}" onerror="this.onerror=null; this.src=window.appLogoUrl || 'logoa.jpg';" width="45" style="border-radius:8px; border:1px solid var(--border-color);"></td><td><b>${escapeHTML(t.title)}</b><br><small>${escapeHTML(t.description)}</small></td><td>${linkText}</td><td><button class="action-btn" onclick="openEditAITool('${c.key}')"><i class="fa-solid fa-pen"></i></button><button class="action-btn" onclick="deleteItem('ai_tools','${c.key}')"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; 
+                    b.innerHTML+=`<tr><td><img src="${aiImg}" onerror="this.onerror=null; this.src=window.appLogoUrl || 'logoa.jpg';" width="45" style="border-radius:8px; border:1px solid var(--border-color);"></td><td><b>${escapeHTML(t.title)}</b><br><small>${escapeHTML(t.description)}</small><br><span style="color:var(--accent); font-size:0.75rem;">Headline: ${escapeHTML(t.headline || 'None')}</span></td><td>${linkText}</td><td><button class="action-btn" onclick="openEditAITool('${c.key}')"><i class="fa-solid fa-pen"></i></button><button class="action-btn" onclick="deleteItem('ai_tools','${c.key}')"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; 
                 }); 
             });
             
             db.ref('categories').on('value', s=>{ 
-                const b=document.getElementById('categories-table-body'); b.innerHTML=''; const sel=document.getElementById('p-cat'); if(sel) sel.innerHTML='<option value="">Select Category</option>'; 
+                const b=document.getElementById('categories-table-body'); b.innerHTML=''; const sel=document.getElementById('p-cat'); if(sel) sel.innerHTML='<option value="">Select Category</option>'; allCategoriesData={};
                 if(!s.exists() || s.numChildren() === 0){ b.innerHTML='<tr><td colspan="3" style="text-align:center; padding:20px; font-weight:bold; color:var(--text-gray);">No Categories Found</td></tr>'; return; }
                 s.forEach(c=>{ 
-                    const cat=c.val(); let catImg = cat.imageUrl || appLogoUrl; 
-                    b.innerHTML+=`<tr><td><img src="${catImg}" onerror="this.onerror=null; this.src=window.appLogoUrl || 'logoa.jpg';" width="40"></td><td>${escapeHTML(cat.title)}</td><td><button class="action-btn" onclick="db.ref('categories/${c.key}').remove()"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; 
+                    const cat=c.val(); let catImg = cat.imageUrl || appLogoUrl; allCategoriesData[c.key]=cat;
+                    b.innerHTML+=`<tr><td><img src="${catImg}" onerror="this.onerror=null; this.src=window.appLogoUrl || 'logoa.jpg';" width="40"></td><td>${escapeHTML(cat.title)}</td><td><button class="action-btn" onclick="openEditCategory('${c.key}')"><i class="fa-solid fa-pen"></i></button><button class="action-btn" onclick="db.ref('categories/${c.key}').remove()"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; 
                     if(sel) sel.innerHTML+=`<option value="${escapeHTML(cat.title)}">${escapeHTML(cat.title)}</option>`; 
                 }); 
             });
             
             db.ref('banners').on('value', s=>{ 
-                const b=document.getElementById('banners-table-body'); b.innerHTML=''; 
+                const b=document.getElementById('banners-table-body'); b.innerHTML=''; allBannersData={};
                 if(!s.exists() || s.numChildren() === 0){ b.innerHTML='<tr><td colspan="3" style="text-align:center; padding:20px; font-weight:bold; color:var(--text-gray);">No Banners Found</td></tr>'; return; }
                 s.forEach(c=>{ 
-                    let banImg = c.val().imageUrl || appLogoUrl; 
-                    b.innerHTML+=`<tr><td><img src="${banImg}" onerror="this.onerror=null; this.src=window.appLogoUrl || 'logoa.jpg';" width="100"></td><td>${escapeHTML(c.val().title)}</td><td><button class="action-btn" onclick="db.ref('banners/${c.key}').remove()"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; 
+                    let ban = c.val(); allBannersData[c.key]=ban; let banImg = ban.imageUrl || appLogoUrl; 
+                    b.innerHTML+=`<tr><td><img src="${banImg}" onerror="this.onerror=null; this.src=window.appLogoUrl || 'logoa.jpg';" width="100"></td><td>${escapeHTML(ban.title)}</td><td><button class="action-btn" onclick="openEditBanner('${c.key}')"><i class="fa-solid fa-pen"></i></button><button class="action-btn" onclick="db.ref('banners/${c.key}').remove()"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; 
                 }); 
             });
             
-            db.ref('promocodes').on('value', s => { const b=document.getElementById('promocodes-table-body'); if(b){ b.innerHTML=''; if(!s.exists()){ b.innerHTML='<tr><td colspan="3" style="text-align:center; padding:20px; font-weight:bold; color:var(--text-gray);">No Promo Codes Found</td></tr>'; return;} s.forEach(c => { b.innerHTML+=`<tr><td><b>${escapeHTML(c.key)}</b></td><td><b>₹${c.val().discount}</b></td><td><button class="action-btn" onclick="deleteItem('promocodes','${c.key}')"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; }); } });
+            db.ref('promocodes').on('value', s => { 
+                const b=document.getElementById('promocodes-table-body'); 
+                allPromoCodesData={};
+                if(b){ 
+                    b.innerHTML=''; 
+                    if(!s.exists()){ b.innerHTML='<tr><td colspan="3" style="text-align:center; padding:20px; font-weight:bold; color:var(--text-gray);">No Promo Codes Found</td></tr>'; return;} 
+                    s.forEach(c => { 
+                        allPromoCodesData[c.key] = c.val();
+                        b.innerHTML+=`<tr><td><b>${escapeHTML(c.key)}</b></td><td><b>${c.val().discount}%</b></td><td><button class="action-btn" onclick="openEditPromo('${c.key}')"><i class="fa-solid fa-pen"></i></button><button class="action-btn" onclick="deleteItem('promocodes','${c.key}')"><i class="fa-solid fa-trash" style="color:red;"></i></button></td></tr>`; 
+                    }); 
+                } 
+            });
+            
             db.ref('global_offer').on('value', snap => { if(snap.exists() && document.getElementById('go-title')) { const data=snap.val(); document.getElementById('go-title').value=data.title||''; document.getElementById('go-code').value=data.code||''; document.getElementById('go-desc').value=data.desc||''; document.getElementById('go-active').checked=data.active||false;} });
             db.ref('slider_button').on('value', snap => { if(snap.exists() && document.getElementById('sab-text')) { const data=snap.val(); document.getElementById('sab-text').value=data.text||''; document.getElementById('sab-link').value=data.link||''; document.getElementById('sab-active').checked=data.active||false; } });
         }
@@ -955,6 +1067,25 @@
         function openReplyModal(key, uid){ currentTicketId=key; currentTicketUid=uid; document.getElementById('reply-msg').value=''; openModal('reply-modal'); }
         function saveReply(){ const msg=document.getElementById('reply-msg').value; if(msg){ db.ref('tickets/'+currentTicketId).update({reply:msg, status:'Closed'}); sendNotification(currentTicketUid, `Admin replied to your ticket.`); closeModal('reply-modal'); } }
         
+        // --- HELPDESK TICKET EDITING ---
+        function editTicket(key) {
+            const t = allTicketsData[key]; if(!t) return;
+            editTicketId = key;
+            document.getElementById('et-msg').value = t.msg || '';
+            document.getElementById('et-reply').value = t.reply || '';
+            openModal('edit-ticket-modal');
+        }
+        function saveEditedTicket() {
+            if(!editTicketId) return;
+            db.ref('tickets/'+editTicketId).update({
+                msg: document.getElementById('et-msg').value,
+                reply: document.getElementById('et-reply').value
+            }).then(() => {
+                closeModal('edit-ticket-modal');
+                alert("Ticket Updated Successfully");
+            });
+        }
+
         function openEditUser(uid) { 
             let u = allCustomersData[uid]; if(!u) return; 
             editUserId = uid; 
@@ -993,17 +1124,50 @@
         function addCustomFieldUI() { const l=document.getElementById('new-field-label').value, t=document.getElementById('new-field-type').value, o=document.getElementById('new-field-opts').value; if(l){ currentCustomFields.push({label:l, type:t, options:o}); document.getElementById('new-field-label').value=''; document.getElementById('new-field-opts').value=''; renderCustomFields(); } }
         function renderCustomFields() { const c=document.getElementById('custom-fields-container'); c.innerHTML=''; currentCustomFields.forEach((f,i)=>{ c.innerHTML+=`<div style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid #ccc; background:#fff; border-radius:6px; margin-bottom:5px;"><span>${escapeHTML(f.label)} [${escapeHTML(f.type)}]</span><i class="fa-solid fa-xmark" style="color:red; cursor:pointer;" onclick="currentCustomFields.splice(${i},1); renderCustomFields();"></i></div>`; }); }
         
-        function openCategoryModal() { document.getElementById('c-name').value=''; document.getElementById('c-file').value=''; tempImgUrl=''; openModal('category-modal'); } 
-        function openBannerModal() { document.getElementById('b-title').value=''; document.getElementById('b-link').value=''; document.getElementById('b-file').value=''; tempImgUrl=''; openModal('banner-modal'); }
-        function openAIToolModal() { editAIToolId=null; tempImgUrl=""; document.getElementById('ai-img-file').value=''; document.getElementById('ai-name').value=''; document.getElementById('ai-link').value=''; document.getElementById('ai-embed').value=''; document.getElementById('ai-desc').value=''; document.getElementById('aitool-modal-title').innerText='Add AI Tool'; openModal('aitool-modal'); }
-        
-        function openProductModal(){ 
-            editProductId=null; currentCustomFields=[]; renderCustomFields(); tempImgUrl=""; 
-            document.getElementById('p-img-file').value=''; document.getElementById('p-name').value=''; document.getElementById('p-price-ret').value=''; document.getElementById('p-price-dist').value=''; document.getElementById('p-price-dm').value=''; document.getElementById('p-desc').value=''; document.getElementById('p-headline').value=''; 
-            
-            document.getElementById('p-yt-link').value=''; document.getElementById('p-btn1-text').value='Apply Now'; document.getElementById('p-btn1-type').value='form'; document.getElementById('p-btn1-link').value=''; document.getElementById('p-btn1-link').style.display='none'; document.getElementById('p-btn2-show').checked=false; document.getElementById('p-btn2-text').value='Open Link'; document.getElementById('p-btn2-type').value='link'; document.getElementById('p-btn2-link').value=''; document.getElementById('p-btn2-link').style.display='block';
-            openModal('product-modal'); 
+        function openCategoryModal() { editCategoryId=null; document.getElementById('c-name').value=''; document.getElementById('c-file').value=''; tempImgUrl=''; openModal('category-modal'); } 
+        function openEditCategory(key) { let cat=allCategoriesData[key]; editCategoryId=key; document.getElementById('c-name').value=cat.title; tempImgUrl=cat.imageUrl||""; document.getElementById('c-file').value=""; openModal('category-modal'); }
+        function saveCategory() { 
+            const title = document.getElementById('c-name').value.trim(); if(!title) return;
+            const data = {title: title, imageUrl: tempImgUrl};
+            if(editCategoryId) db.ref('categories/'+editCategoryId).update(data).then(()=>{ closeModal('category-modal'); editCategoryId=null; });
+            else db.ref('categories').push(data).then(()=>closeModal('category-modal')); 
         }
+
+        function openBannerModal() { editBannerId=null; document.getElementById('b-title').value=''; document.getElementById('b-link').value=''; document.getElementById('b-file').value=''; tempImgUrl=''; openModal('banner-modal'); }
+        function openEditBanner(key) { let ban=allBannersData[key]; editBannerId=key; document.getElementById('b-title').value=ban.title||''; document.getElementById('b-link').value=ban.link||''; tempImgUrl=ban.imageUrl||""; document.getElementById('b-file').value=""; openModal('banner-modal'); }
+        function saveBanner() { 
+            const title = document.getElementById('b-title').value.trim(); const link = document.getElementById('b-link').value.trim();
+            const data = {title: title, link: link, imageUrl: tempImgUrl};
+            if(editBannerId) db.ref('banners/'+editBannerId).update(data).then(()=>{ closeModal('banner-modal'); editBannerId=null; });
+            else db.ref('banners').push(data).then(()=>closeModal('banner-modal')); 
+        }
+
+        function openPromoModal() { editPromoId=null; document.getElementById('promo-code-val').value=''; document.getElementById('promo-discount-val').value=''; openModal('promo-modal'); } 
+        function openEditPromo(key) { let promo=allPromoCodesData[key]; editPromoId=key; document.getElementById('promo-code-val').value=key; document.getElementById('promo-discount-val').value=promo.discount; openModal('promo-modal'); }
+        function savePromoCode() { 
+            const newCode = document.getElementById('promo-code-val').value.toUpperCase().trim();
+            const discount = Number(document.getElementById('promo-discount-val').value);
+            if(!newCode) return;
+            if(editPromoId && editPromoId !== newCode) { db.ref('promocodes/'+editPromoId).remove(); }
+            db.ref('promocodes/'+newCode).set({discount: discount}).then(()=>{ closeModal('promo-modal'); editPromoId=null; }); 
+        }
+
+        function openEditWalletReq(key) {
+            let w = allWalletReqsData[key]; if(!w) return;
+            editWalletReqId = key;
+            document.getElementById('ew-amount').value = w.amount || 0;
+            document.getElementById('ew-utr').value = w.utr || '';
+            openModal('wallet-edit-modal');
+        }
+        function saveWalletReq() {
+            if(!editWalletReqId) return;
+            const newAmount = Number(document.getElementById('ew-amount').value);
+            const newUtr = document.getElementById('ew-utr').value.trim();
+            db.ref('wallet_requests/'+editWalletReqId).update({ amount: newAmount, utr: newUtr }).then(() => { closeModal('wallet-edit-modal'); editWalletReqId = null; alert("Wallet Request Updated!"); });
+        }
+        
+        function openAIToolModal() { editAIToolId=null; tempImgUrl=""; document.getElementById('ai-img-file').value=''; document.getElementById('ai-name').value=''; document.getElementById('ai-headline').value=''; document.getElementById('ai-link').value=''; document.getElementById('ai-embed').value=''; document.getElementById('ai-desc').value=''; document.getElementById('aitool-modal-title').innerText='Add AI Tool'; openModal('aitool-modal'); }
+        function openProductModal(){ editProductId=null; currentCustomFields=[]; renderCustomFields(); tempImgUrl=""; document.getElementById('p-img-file').value=''; document.getElementById('p-name').value=''; document.getElementById('p-price-ret').value=''; document.getElementById('p-price-dist').value=''; document.getElementById('p-price-dm').value=''; document.getElementById('p-desc').value=''; document.getElementById('p-headline').value=''; document.getElementById('p-yt-link').value=''; document.getElementById('p-btn1-text').value='Apply Now'; document.getElementById('p-btn1-type').value='form'; document.getElementById('p-btn1-link').value=''; document.getElementById('p-btn1-link').style.display='none'; document.getElementById('p-btn2-show').checked=false; document.getElementById('p-btn2-text').value='Open Link'; document.getElementById('p-btn2-type').value='link'; document.getElementById('p-btn2-link').value=''; document.getElementById('p-btn2-link').style.display='block'; openModal('product-modal'); }
         
         function openEditProduct(key) { 
             let p=allAdminProducts[key]; editProductId=key; currentCustomFields=p.customForm||[]; renderCustomFields(); 
@@ -1024,12 +1188,30 @@
             else db.ref('products').push(pData).then(()=>closeModal('product-modal')); 
         }
 
-        function openEditAITool(key) { let t=allAITools[key]; editAIToolId=key; tempImgUrl=t.imageUrl||""; document.getElementById('ai-name').value=t.title||''; document.getElementById('ai-link').value=t.link||''; document.getElementById('ai-embed').value=t.embed||''; document.getElementById('ai-desc').value=t.description||''; document.getElementById('aitool-modal-title').innerText='Edit AI Tool'; openModal('aitool-modal'); }
-        function saveAITool() { const tData={title:document.getElementById('ai-name').value, link:document.getElementById('ai-link').value, embed:document.getElementById('ai-embed').value, description:document.getElementById('ai-desc').value, imageUrl:tempImgUrl}; if(editAIToolId) db.ref('ai_tools/'+editAIToolId).update(tData).then(()=>closeModal('aitool-modal')); else db.ref('ai_tools').push(tData).then(()=>closeModal('aitool-modal')); }
+        function openEditAITool(key) { 
+            let t=allAITools[key]; editAIToolId=key; tempImgUrl=t.imageUrl||""; 
+            document.getElementById('ai-name').value=t.title||''; 
+            document.getElementById('ai-headline').value=t.headline||''; 
+            document.getElementById('ai-link').value=t.link||''; 
+            document.getElementById('ai-embed').value=t.embed||''; 
+            document.getElementById('ai-desc').value=t.description||''; 
+            document.getElementById('aitool-modal-title').innerText='Edit AI Tool'; 
+            openModal('aitool-modal'); 
+        }
+        
+        function saveAITool() { 
+            const tData={
+                title:document.getElementById('ai-name').value, 
+                headline:document.getElementById('ai-headline').value, 
+                link:document.getElementById('ai-link').value, 
+                embed:document.getElementById('ai-embed').value, 
+                description:document.getElementById('ai-desc').value, 
+                imageUrl:tempImgUrl
+            }; 
+            if(editAIToolId) db.ref('ai_tools/'+editAIToolId).update(tData).then(()=>closeModal('aitool-modal')); 
+            else db.ref('ai_tools').push(tData).then(()=>closeModal('aitool-modal')); 
+        }
 
-        function saveCategory() { db.ref('categories').push({title:document.getElementById('c-name').value, imageUrl:tempImgUrl}).then(()=>closeModal('category-modal')); }
-        function openPromoModal() { document.getElementById('promo-code-val').value=''; document.getElementById('promo-discount-val').value=''; openModal('promo-modal'); } function savePromoCode() { db.ref('promocodes/'+document.getElementById('promo-code-val').value.toUpperCase()).set({discount: Number(document.getElementById('promo-discount-val').value)}).then(()=>closeModal('promo-modal')); }
-        function saveBanner() { db.ref('banners').push({title:document.getElementById('b-title').value, link:document.getElementById('b-link').value, imageUrl:tempImgUrl}).then(()=>closeModal('banner-modal')); }
         function viewCustomImages(orderKey) { const o=masterOrders.find(x=>x.key===orderKey); const c=document.getElementById('custom-image-view-container'); c.innerHTML=''; o.uploadedDocs.forEach(url=>{ c.innerHTML+=`<a href="${escapeHTML(url)}" target="_blank"><img src="${escapeHTML(url)}" style="width:150px; height:150px; object-fit:contain; background:#f1f5f9; padding:5px; border-radius:8px;"></a>`; }); openModal('custom-image-modal'); }
         function deleteItem(node, key) { if(confirm("Are you sure you want to delete this?")) db.ref(node + '/' + key).remove(); }
         function renderSalesChart(dailySalesData) { try { if(typeof Chart==='undefined') return; const ctx=document.getElementById('salesChart').getContext('2d'); const labels=Object.keys(dailySalesData); const data=Object.values(dailySalesData); if(salesChartInstance){ salesChartInstance.destroy(); } salesChartInstance = new Chart(ctx, { type:'line', data:{labels:labels, datasets:[{label:'Revenue (₹)', data:data, borderColor:'#3b82f6', backgroundColor:'rgba(59,130,246,0.1)', fill:true}]}, options:{responsive:true, maintainAspectRatio:false} }); } catch(e){} }
