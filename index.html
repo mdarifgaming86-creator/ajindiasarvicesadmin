@@ -55,6 +55,14 @@
         .order-chk { width: 18px; height: 18px; cursor: pointer; margin: 0; }
         .copy-utr { cursor: pointer; position: relative; }
         .copy-utr:hover::after { content: 'Click to copy'; position: absolute; top: -20px; left: 0; background: #333; color: #fff; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; white-space: nowrap; }
+
+        /* Custom Toggle Switch for Ads */
+        .switch { position: relative; display: inline-block; width: 50px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider-toggle { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .4s; border-radius: 24px; }
+        .slider-toggle:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider-toggle { background-color: var(--success); }
+        input:checked + .slider-toggle:before { transform: translateX(26px); }
     </style>
 </head>
 <body>
@@ -279,21 +287,60 @@
 
             <section id="settings" class="page" style="display:none;">
                 
-                <!-- NEW AD MANAGEMENT SECTION -->
+                <!-- ADVANCED ADSTERRA AD MANAGEMENT SECTION WITH TOGGLES -->
                 <div class="dashboard-box" style="border: 2px solid var(--success); background: #f0fdf4;">
-                    <h3 style="color:var(--success);"><i class="fa-solid fa-bullhorn"></i> Ad Management (Monetization)</h3>
-                    <p style="font-size:0.8rem; color:var(--text-gray); margin-bottom:10px;">Paste HTML/Script codes from ad networks (like AdSense, Adsterra, etc.) here to show ads on your portal.</p>
+                    <h3 style="color:var(--success);"><i class="fa-solid fa-bullhorn"></i> Ad Monetization Control</h3>
+                    <p style="font-size:0.8rem; color:var(--text-gray); margin-bottom:15px;">Turn ads ON/OFF and manage your Adsterra Codes easily.</p>
                     
-                    <label style="font-size:0.8rem; font-weight:bold; color:var(--text-dark);">1. Top Banner Ad (Shows below the Top Header)</label>
-                    <textarea id="ad-top" placeholder="Paste Ad HTML/Script code here..." rows="3"></textarea>
+                    <!-- Ad 1: Top Banner -->
+                    <div style="background:#fff; padding:15px; border-radius:8px; border:1px solid #bbf7d0; margin-bottom:15px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                            <label style="font-weight:bold; color:var(--text-dark);">1. Top Banner (728x90) - Above Slider</label>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <span style="font-size:0.8rem; font-weight:bold; color:var(--text-gray);">ON/OFF</span>
+                                <label class="switch"><input type="checkbox" id="ad-top-active"><span class="slider-toggle"></span></label>
+                            </div>
+                        </div>
+                        <textarea id="ad-top-code" rows="3" placeholder="Paste Script Here..."></textarea>
+                    </div>
+
+                    <!-- Ad 2: Bottom Banner -->
+                    <div style="background:#fff; padding:15px; border-radius:8px; border:1px solid #bbf7d0; margin-bottom:15px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                            <label style="font-weight:bold; color:var(--text-dark);">2. Footer Banner (728x90) - Above Footer</label>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <span style="font-size:0.8rem; font-weight:bold; color:var(--text-gray);">ON/OFF</span>
+                                <label class="switch"><input type="checkbox" id="ad-bottom-active"><span class="slider-toggle"></span></label>
+                            </div>
+                        </div>
+                        <textarea id="ad-bottom-code" rows="3" placeholder="Paste Script Here..."></textarea>
+                    </div>
+
+                    <!-- Ad 3: Modal Banner -->
+                    <div style="background:#fff; padding:15px; border-radius:8px; border:1px solid #bbf7d0; margin-bottom:15px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                            <label style="font-weight:bold; color:var(--text-dark);">3. Modal Banner (468x60) - Inside Service/Tool</label>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <span style="font-size:0.8rem; font-weight:bold; color:var(--text-gray);">ON/OFF</span>
+                                <label class="switch"><input type="checkbox" id="ad-modal-active"><span class="slider-toggle"></span></label>
+                            </div>
+                        </div>
+                        <textarea id="ad-modal-code" rows="3" placeholder="Paste Script Here..."></textarea>
+                    </div>
+
+                    <!-- Ad 4: Social Bar -->
+                    <div style="background:#fff; padding:15px; border-radius:8px; border:1px solid #bbf7d0; margin-bottom:15px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                            <label style="font-weight:bold; color:var(--text-dark);">4. Social Bar (Popunder / Global)</label>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <span style="font-size:0.8rem; font-weight:bold; color:var(--text-gray);">ON/OFF</span>
+                                <label class="switch"><input type="checkbox" id="ad-social-active"><span class="slider-toggle"></span></label>
+                            </div>
+                        </div>
+                        <textarea id="ad-social-code" rows="2" placeholder="Paste Script Here..."></textarea>
+                    </div>
                     
-                    <label style="font-size:0.8rem; font-weight:bold; color:var(--text-dark);">2. Bottom Banner Ad (Shows above the Footer)</label>
-                    <textarea id="ad-bottom" placeholder="Paste Ad HTML/Script code here..." rows="3"></textarea>
-                    
-                    <label style="font-size:0.8rem; font-weight:bold; color:var(--text-dark);">3. Inside Services & AI Tools (Shows at the bottom of Modals)</label>
-                    <textarea id="ad-modal" placeholder="Paste Ad HTML/Script code here..." rows="3"></textarea>
-                    
-                    <button class="btn-primary" onclick="saveAdSettings()" style="width:auto; margin-top:10px; background:var(--success);">Save Ad Codes</button>
+                    <button id="save-ad-btn" class="btn-primary" onclick="saveAdSettings()" style="width:auto; margin-top:10px; background:var(--success);"><i class="fa-solid fa-floppy-disk"></i> Save All Ads</button>
                 </div>
                 <!-- END AD MANAGEMENT -->
 
@@ -878,11 +925,29 @@
 
         // --- AD MANAGEMENT JS ---
         function saveAdSettings() {
-            db.ref('app_settings/ad_codes').set({
-                top: document.getElementById('ad-top').value,
-                bottom: document.getElementById('ad-bottom').value,
-                modal: document.getElementById('ad-modal').value
-            }).then(() => alert("Ad Codes Saved Successfully!"));
+            const btn = document.getElementById('save-ad-btn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+            btn.disabled = true;
+
+            db.ref('app_settings/ads').set({
+                top: { active: document.getElementById('ad-top-active').checked, code: document.getElementById('ad-top-code').value },
+                bottom: { active: document.getElementById('ad-bottom-active').checked, code: document.getElementById('ad-bottom-code').value },
+                modal: { active: document.getElementById('ad-modal-active').checked, code: document.getElementById('ad-modal-code').value },
+                social: { active: document.getElementById('ad-social-active').checked, code: document.getElementById('ad-social-code').value }
+            }).then(() => {
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Successfully Saved!';
+                btn.style.background = '#10b981'; // green
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.background = 'var(--success)';
+                    btn.disabled = false;
+                }, 3000);
+            }).catch((err) => {
+                alert("Error saving ads: " + err.message);
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            });
         }
 
         function loadAdminData(isStaff) {
@@ -963,11 +1028,24 @@
                         if(data.marquee && document.getElementById('marquee-input')) { document.getElementById('marquee-input').value = data.marquee.text || ''; document.getElementById('marquee-active').checked = data.marquee.active || false; }
                         if(data.refer_earn && document.getElementById('ref-bonus')) { document.getElementById('ref-bonus').value = data.refer_earn.signupBonus || 50; document.getElementById('ref-comm').value = data.refer_earn.formCommission || 10; }
                         
-                        // LOAD AD CODES INTO TEXTAREAS
-                        if(data.ad_codes) {
-                            if(document.getElementById('ad-top')) document.getElementById('ad-top').value = data.ad_codes.top || '';
-                            if(document.getElementById('ad-bottom')) document.getElementById('ad-bottom').value = data.ad_codes.bottom || '';
-                            if(document.getElementById('ad-modal')) document.getElementById('ad-modal').value = data.ad_codes.modal || '';
+                        // LOAD AD CODES INTO TEXTAREAS (Updated for Toggles)
+                        if(data.ads) {
+                            if(document.getElementById('ad-top-code')) {
+                                document.getElementById('ad-top-active').checked = data.ads.top?.active || false;
+                                document.getElementById('ad-top-code').value = data.ads.top?.code || '';
+                            }
+                            if(document.getElementById('ad-bottom-code')) {
+                                document.getElementById('ad-bottom-active').checked = data.ads.bottom?.active || false;
+                                document.getElementById('ad-bottom-code').value = data.ads.bottom?.code || '';
+                            }
+                            if(document.getElementById('ad-modal-code')) {
+                                document.getElementById('ad-modal-active').checked = data.ads.modal?.active || false;
+                                document.getElementById('ad-modal-code').value = data.ads.modal?.code || '';
+                            }
+                            if(document.getElementById('ad-social-code')) {
+                                document.getElementById('ad-social-active').checked = data.ads.social?.active || false;
+                                document.getElementById('ad-social-code').value = data.ads.social?.code || '';
+                            }
                         }
 
                         if(data.main_logo) { 
