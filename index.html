@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AJ INDIA SARVICES - Admin Portal</title>
+    <title>AJ India Sarvices - Admin Portal</title>
     <link rel="icon" type="image/jpeg" href="logoa.jpg" class="dynamic-admin-logo">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -66,12 +66,11 @@
 
     <div id="login-screen" style="display:none;">
         <div class="login-box">
-            <img src="logoa.jpg" class="dynamic-admin-logo" style="width: auto; height: 80px; margin-bottom: 15px;" onerror="this.onerror=null; this.src='https://via.placeholder.com/150x80?text=AJ+INDIA+SARVICES'">
+            <img src="logoa.jpg" class="dynamic-admin-logo" style="width: auto; height: 80px; margin-bottom: 15px;" onerror="this.onerror=null; this.src='https://via.placeholder.com/150x80?text=Aj+India+Sarvices'">
             <h2 style="margin-bottom: 20px; font-weight:900;">ADMIN PORTAL</h2>
             <input type="email" id="admin-email" placeholder="Admin/Staff Email" style="font-weight:bold;">
             <input type="password" id="admin-password" placeholder="•••••••••">
             
-            <!-- Forgot Password Button Added Here -->
             <div style="text-align: right; margin-bottom: 15px;">
                 <span onclick="adminResetPassword()" style="color: #2563eb; font-size: 0.85rem; font-weight: bold; cursor: pointer;">Forgot Password?</span>
             </div>
@@ -84,7 +83,7 @@
     <div id="admin-layout">
         <aside class="sidebar">
             <div style="padding:20px; text-align:center; border-bottom:1px solid #334155; position: sticky; top: 0; background: var(--sidebar-bg); z-index: 10;">
-                <img src="logoa.jpg" class="dynamic-admin-logo" style="width:auto; height: 60px; background:#fff; border-radius:8px; padding:5px; transition: 0.3s;" onerror="this.onerror=null; this.src='https://via.placeholder.com/150x80?text=AJ+INDIA+SARVICES'">
+                <img src="logoa.jpg" class="dynamic-admin-logo" style="width:auto; height: 60px; background:#fff; border-radius:8px; padding:5px; transition: 0.3s;" onerror="this.onerror=null; this.src='https://via.placeholder.com/150x80?text=Aj+India+Sarvices'">
             </div>
             
             <div class="nav-item active" onclick="switchPage('orders', this)"><i class="fa-solid fa-file-contract"></i> Applications</div>
@@ -279,6 +278,25 @@
             </section>
 
             <section id="settings" class="page" style="display:none;">
+                
+                <!-- NEW AD MANAGEMENT SECTION -->
+                <div class="dashboard-box" style="border: 2px solid var(--success); background: #f0fdf4;">
+                    <h3 style="color:var(--success);"><i class="fa-solid fa-bullhorn"></i> Ad Management (Monetization)</h3>
+                    <p style="font-size:0.8rem; color:var(--text-gray); margin-bottom:10px;">Paste HTML/Script codes from ad networks (like AdSense, Adsterra, etc.) here to show ads on your portal.</p>
+                    
+                    <label style="font-size:0.8rem; font-weight:bold; color:var(--text-dark);">1. Top Banner Ad (Shows below the Top Header)</label>
+                    <textarea id="ad-top" placeholder="Paste Ad HTML/Script code here..." rows="3"></textarea>
+                    
+                    <label style="font-size:0.8rem; font-weight:bold; color:var(--text-dark);">2. Bottom Banner Ad (Shows above the Footer)</label>
+                    <textarea id="ad-bottom" placeholder="Paste Ad HTML/Script code here..." rows="3"></textarea>
+                    
+                    <label style="font-size:0.8rem; font-weight:bold; color:var(--text-dark);">3. Inside Services & AI Tools (Shows at the bottom of Modals)</label>
+                    <textarea id="ad-modal" placeholder="Paste Ad HTML/Script code here..." rows="3"></textarea>
+                    
+                    <button class="btn-primary" onclick="saveAdSettings()" style="width:auto; margin-top:10px; background:var(--success);">Save Ad Codes</button>
+                </div>
+                <!-- END AD MANAGEMENT -->
+
                 <div class="dashboard-box" style="border: 2px solid var(--danger); background: #fef2f2;">
                     <h3 style="color:var(--danger);"><i class="fa-solid fa-power-off"></i> Emergency Control</h3>
                     <label style="font-weight:bold; cursor:pointer;">
@@ -428,17 +446,14 @@
     <div id="reply-modal" class="modal-overlay"><div class="modal-content"><i class="fa-solid fa-xmark close-btn" onclick="closeModal('reply-modal')"></i><h3>Reply Ticket</h3><textarea id="reply-msg" rows="3"></textarea><button class="btn-primary" onclick="saveReply()">Send Reply</button></div></div>
     <div id="custom-image-modal" class="modal-overlay" onclick="closeModal('custom-image-modal')"><div class="modal-content"><h3 style="margin-bottom: 15px;">Customer Documents</h3><div id="custom-image-view-container" style="display:flex; flex-wrap:wrap; gap:10px;"></div></div></div>
     
-    <!-- User A2Z Control Modal -->
     <div id="user-modal" class="modal-overlay">
         <div class="modal-content">
             <i class="fa-solid fa-xmark close-btn" onclick="closeModal('user-modal')"></i>
             <h3 id="user-modal-title" style="margin-bottom:20px; font-weight:900; color:var(--primary);"><i class="fa-solid fa-user-shield"></i> Manage User Profile</h3>
-            
             <div style="display:flex; gap:10px; margin-bottom:15px;">
                 <div style="flex:1;"><label style="font-size:0.8rem; font-weight:bold;">Shop Name</label><input type="text" id="u-shop" placeholder="Shop Name" style="margin-bottom:0;"></div>
                 <div style="flex:1;"><label style="font-size:0.8rem; font-weight:bold;">Owner Name</label><input type="text" id="u-name" placeholder="Name" style="margin-bottom:0;"></div>
             </div>
-            
             <div style="display:flex; gap:10px; margin-bottom:15px;">
                 <div style="flex:1;">
                     <label style="font-size:0.8rem; font-weight:bold;">User Role</label>
@@ -449,19 +464,11 @@
                     <select id="u-status" style="margin-bottom:0;"><option value="Pending">Pending</option><option value="Active">Active</option><option value="Suspended">Suspended</option></select>
                 </div>
             </div>
-
-            <!-- Enhanced Wallet Section -->
             <div style="background:#f0fdf4; padding:15px; border-radius:8px; border:1px solid #bbf7d0; margin-bottom:15px;">
                 <label style="font-size:0.9rem; font-weight:900; color:#166534; display:block; margin-bottom:5px;"><i class="fa-solid fa-wallet"></i> User Wallet Balance (₹)</label>
-                <div style="display:flex; gap:10px;">
-                    <input type="number" id="u-wallet" placeholder="Enter Amount" style="margin-bottom:0; font-weight:bold; font-size:1.1rem; color:var(--success);">
-                </div>
-                <small style="color:#15803d; font-weight:bold;">ম্যানুয়ালি ব্যালান্স আপডেট করতে চাইলে এখানে টাকার পরিমাণ লিখে Save করুন।</small>
+                <div style="display:flex; gap:10px;"><input type="number" id="u-wallet" placeholder="Enter Amount" style="margin-bottom:0; font-weight:bold; font-size:1.1rem; color:var(--success);"></div>
             </div>
-            
-            <!-- Password Reset Feature -->
             <button class="btn-primary" onclick="sendPassResetAdmin()" style="width:100%; background:var(--text-gray); margin-bottom:10px;"><i class="fa-solid fa-key"></i> Send Password Reset Link to User</button>
-            
             <button class="btn-primary" onclick="saveUser()" style="width:100%; background:var(--primary); font-size:1.1rem;"><i class="fa-solid fa-floppy-disk"></i> Update User Data</button>
         </div>
     </div>
@@ -582,12 +589,11 @@
         const auth = adminApp.auth(); 
         const IMGBB_API_KEY = "122cc16740d69ce4f60b53f0effed6c1";
         
-        // Ekhane tomar Email ar UID set kora holo
         const ADMIN_EMAIL = "ajindiasarvices@gmail.com"; 
         const ADMIN_UID = "Eo48O4mDAPXSjEAZOOpbNFYSRbI3";
         let isSuperAdmin = false;
         
-        let masterOrders=[], currentOrdersToDisplay=[], allCustomersData={}, allCustomersArray=[], allProductsData={}, currentCustomFields={}, allAITools={}, allAdminProducts={};
+        let masterOrders=[], currentOrdersToDisplay=[], allCustomersData=[], allCustomersArray=[], allProductsData={}, currentCustomFields=[], allAITools={}, allAdminProducts={};
         let globalWallet = []; 
         let allTicketsData = {};
         
@@ -704,7 +710,6 @@
 
         auth.onAuthStateChanged((user) => {
             if (user) {
-                // Ekhane check kora hochhe tomar specified UID & Email ache ki na
                 isSuperAdmin = (user.uid === ADMIN_UID || (user.email && user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()));
                 if(!isSuperAdmin) {
                     db.ref('app_settings/staff_users/'+user.uid).once('value').then(snap => {
@@ -749,7 +754,6 @@
             });
         }
         
-        // Notun Forgot Password Function
         function adminResetPassword() {
             const em = document.getElementById('admin-email').value.trim();
             const err = document.getElementById('login-error');
@@ -872,6 +876,15 @@
         function updateAdminLogoPreview(size) { document.querySelectorAll('.dynamic-admin-logo').forEach(img => { img.style.height = size + 'px'; img.style.width = 'auto'; }); }
         function saveLogoSize() { const size = document.getElementById('logo-size-slider').value; db.ref('app_settings/logo_size').set(size).then(() => { alert("Logo Size Saved successfully!"); }); }
 
+        // --- AD MANAGEMENT JS ---
+        function saveAdSettings() {
+            db.ref('app_settings/ad_codes').set({
+                top: document.getElementById('ad-top').value,
+                bottom: document.getElementById('ad-bottom').value,
+                modal: document.getElementById('ad-modal').value
+            }).then(() => alert("Ad Codes Saved Successfully!"));
+        }
+
         function loadAdminData(isStaff) {
             // LOAD ORDERS
             db.ref('orders').limitToLast(orderLimit).on('value', s=>{
@@ -950,6 +963,13 @@
                         if(data.marquee && document.getElementById('marquee-input')) { document.getElementById('marquee-input').value = data.marquee.text || ''; document.getElementById('marquee-active').checked = data.marquee.active || false; }
                         if(data.refer_earn && document.getElementById('ref-bonus')) { document.getElementById('ref-bonus').value = data.refer_earn.signupBonus || 50; document.getElementById('ref-comm').value = data.refer_earn.formCommission || 10; }
                         
+                        // LOAD AD CODES INTO TEXTAREAS
+                        if(data.ad_codes) {
+                            if(document.getElementById('ad-top')) document.getElementById('ad-top').value = data.ad_codes.top || '';
+                            if(document.getElementById('ad-bottom')) document.getElementById('ad-bottom').value = data.ad_codes.bottom || '';
+                            if(document.getElementById('ad-modal')) document.getElementById('ad-modal').value = data.ad_codes.modal || '';
+                        }
+
                         if(data.main_logo) { 
                             appLogoUrl = data.main_logo; 
                             document.querySelectorAll('.dynamic-admin-logo').forEach(el => {
@@ -974,7 +994,6 @@
                 });
             }
             
-            // TICKETS UPDATED FOR EDIT & DELETE
             db.ref('tickets').on('value', s=>{ 
                 const b=document.getElementById('tickets-table-body'); b.innerHTML=''; allTicketsData = {};
                 if(!s.exists() || s.numChildren() === 0){ b.innerHTML='<tr><td colspan="4" style="text-align:center; padding:20px; font-weight:bold; color:var(--text-gray);">No Tickets Found</td></tr>'; return; }
@@ -1093,7 +1112,6 @@
         function openReplyModal(key, uid){ currentTicketId=key; currentTicketUid=uid; document.getElementById('reply-msg').value=''; openModal('reply-modal'); }
         function saveReply(){ const msg=document.getElementById('reply-msg').value; if(msg){ db.ref('tickets/'+currentTicketId).update({reply:msg, status:'Closed'}); sendNotification(currentTicketUid, `Admin replied to your ticket.`); closeModal('reply-modal'); } }
         
-        // --- HELPDESK TICKET EDITING ---
         function editTicket(key) {
             const t = allTicketsData[key]; if(!t) return;
             editTicketId = key;
@@ -1137,18 +1155,6 @@
         }
         
         function uploadTempFile(inp){ const f=inp.files[0]; const fd=new FormData(); fd.append('image',f); fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`,{method:'POST',body:fd}).then(r=>r.json()).then(d=>{tempImgUrl=d.data.url; alert("Uploaded! Click Save to apply.");}); }
-        function saveMarqueeAndOffer() { db.ref('app_settings/marquee').set({text: document.getElementById('marquee-input').value, active: document.getElementById('marquee-active').checked}); db.ref('global_offer').set({title: document.getElementById('go-title').value, code: document.getElementById('go-code').value.toUpperCase(), desc: document.getElementById('go-desc').value, active: document.getElementById('go-active').checked}); alert("Updated!"); }
-        function saveReferralSettings() { db.ref('app_settings/refer_earn').set({signupBonus: Number(document.getElementById('ref-bonus').value), formCommission: Number(document.getElementById('ref-comm').value)}).then(()=>alert("Pricing Updated!")); }
-        function saveInvoiceSettings() { db.ref('app_settings/invoice_details').set({name: document.getElementById('inv-c-name').value, address: document.getElementById('inv-c-address').value, email: document.getElementById('inv-c-email').value, phone: document.getElementById('inv-c-phone').value, gst: document.getElementById('inv-c-gst').value}).then(()=>alert("Invoice Details Saved")); }
-        
-        function saveLegalPolicies() { 
-            db.ref('app_settings/legal_policies').set({ terms: document.getElementById('lp-terms').value, privacy: document.getElementById('lp-privacy').value, refund: document.getElementById('lp-refund').value }).then(()=>alert("Policies Saved")); 
-            db.ref('legal_policies').set({ terms: document.getElementById('lp-terms').value, privacy: document.getElementById('lp-privacy').value, refund: document.getElementById('lp-refund').value });
-        }
-        
-        function saveSliderButton() { db.ref('slider_button').set({text: document.getElementById('sab-text').value, link: document.getElementById('sab-link').value, active: document.getElementById('sab-active').checked}); alert("Updated");}
-        function addCustomFieldUI() { const l=document.getElementById('new-field-label').value, t=document.getElementById('new-field-type').value, o=document.getElementById('new-field-opts').value; if(l){ currentCustomFields.push({label:l, type:t, options:o}); document.getElementById('new-field-label').value=''; document.getElementById('new-field-opts').value=''; renderCustomFields(); } }
-        function renderCustomFields() { const c=document.getElementById('custom-fields-container'); c.innerHTML=''; currentCustomFields.forEach((f,i)=>{ c.innerHTML+=`<div style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid #ccc; background:#fff; border-radius:6px; margin-bottom:5px;"><span>${escapeHTML(f.label)} [${escapeHTML(f.type)}]</span><i class="fa-solid fa-xmark" style="color:red; cursor:pointer;" onclick="currentCustomFields.splice(${i},1); renderCustomFields();"></i></div>`; }); }
         
         function openCategoryModal() { editCategoryId=null; document.getElementById('c-name').value=''; document.getElementById('c-file').value=''; tempImgUrl=''; openModal('category-modal'); } 
         function openEditCategory(key) { let cat=allCategoriesData[key]; editCategoryId=key; document.getElementById('c-name').value=cat.title; tempImgUrl=cat.imageUrl||""; document.getElementById('c-file').value=""; openModal('category-modal'); }
